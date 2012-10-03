@@ -14,6 +14,21 @@
 #include "Accelerometer.h"
 
 class AccelerometerADXL335 : public Accelerometer {
+
+    /**
+     * The x pin.
+     */
+    int xPin;
+    
+    /**
+     * The y pin.
+     */
+    int yPin;
+    
+    /**
+     * The z pin.
+     */
+    int zPin;
     
     /**
      * The arduino power supply voltage.

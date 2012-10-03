@@ -13,32 +13,6 @@
 
 class Accelerometer {
 
-protected:
-
-    /**
-     * The x pin.
-     */
-    int xPin;
-    
-    /**
-     * The y pin.
-     */
-    int yPin;
-    
-    /**
-     * The z pin.
-     */
-    int zPin;
-    
-    /**
-     * Protected constructor.
-     * 
-     * @param xPin      The x pin.
-     * @param yPin      The y pin.
-     * @param zPin      The z pin.
-     */
-    Accelerometer(int xPin, int yPin, int zPin);
-
 public:
 
     /**

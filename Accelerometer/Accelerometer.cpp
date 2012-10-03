@@ -12,11 +12,5 @@
 #define __ARDUINO_DRIVER_ACCELEROMETER_CPP__ 1
 
 #include "Accelerometer.h"
-    
-Accelerometer::Accelerometer(int xPin, int yPin, int zPin) {
-    this->xPin = xPin;
-    this->yPin = yPin;
-    this->zPin = zPin;
-}
 
 #endif /* __ARDUINO_DRIVER_ACCELEROMETER_CPP__ */

@@ -11,13 +11,16 @@
 #ifndef __ARDUINO_DRIVER_ACCELEROMETER_ADXL335_CPP__
 #define __ARDUINO_DRIVER_ACCELEROMETER_ADXL335_CPP__ 1
 
-#include "AccelerometerADXL335.h"
 #include <Arduino.h>
+#include "AccelerometerADXL335.h"
 
-AccelerometerADXL335::AccelerometerADXL335(int xPin, int yPin, int zPin) : Accelerometer(xPin, yPin, zPin) {
-    arduinoPowerSupply = 5.0;
-    sensorPowerSupply = 3.3;
-    zeroGBias = sensorPowerSupply / 2;
+AccelerometerADXL335::AccelerometerADXL335(int xPin, int yPin, int zPin) {
+    this->xPin = xPin;
+    this->yPin = yPin;
+    this->zPin = zPin;
+    this->arduinoPowerSupply = 5.0;
+    this->sensorPowerSupply = 3.3;
+    this->zeroGBias = sensorPowerSupply / 2;
 }
 
 float AccelerometerADXL335::readPin(int pin) {
