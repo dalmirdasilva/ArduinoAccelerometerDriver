@@ -22,7 +22,7 @@ AccelerometerMMA8451::AccelerometerMMA8451(unsigned char sa0, int sclPin, int sd
     Wire.begin();
 }
 
-void AccelerometerMMA8451::activation(DeviceActivation activation) {
+void AccelerometerMMA8451::deviceActivation(DeviceActivation activation) {
     configureRegisterBits(CTRL_REG1, ACTIVE_MASK, activation);
     this->activation = activation;
 }
@@ -35,9 +35,10 @@ void AccelerometerMMA8451::setDynamicRange(DynamicRange range) {
 }
 
 void AccelerometerMMA8451::setOutputDataRate(OutputDataRate rate) {
-    rate <<= 3;
+    unsigned char v = (unsigned char ) rate;
+    v <<= 3;
     standby();
-    configureRegisterBits(CTRL_REG1, ODR_MASK, rate);
+    configureRegisterBits(CTRL_REG1, ODR_MASK, v);
     active();
 }
 
@@ -97,7 +98,7 @@ float AccelerometerMMA8451::convertToG(unsigned char buf[2]) {
     g += ((buf[1] & 0x70) >> 6 - range);
     g +=  (aux & frac_mask) / (float)(frac_mask + 1);
     if (buf[1] & 0x80) {
-        g *= -1;
+        return -(g);
     }
     return g;
 }
@@ -120,7 +121,7 @@ unsigned char AccelerometerMMA8451::readRegister(Register reg) {
     return v;
 }
 
-void AccelerometerMMA8451::writeRegisterBlock(unsigned char to, unsigned char* buf, int len) {
+void AccelerometerMMA8451::writeRegisterBlock(unsigned char to, unsigned char* buf, unsigned char len) {
     Wire.beginTransmission(address);
     Wire.write(to);
     for (int i = 0; i < len; i++) {
@@ -129,7 +130,7 @@ void AccelerometerMMA8451::writeRegisterBlock(unsigned char to, unsigned char* b
     Wire.endTransmission();
 }
 
-void AccelerometerMMA8451::readRegisterBlock(unsigned char from, unsigned char* buf, int len) {
+void AccelerometerMMA8451::readRegisterBlock(unsigned char from, unsigned char* buf, unsigned char len) {
     Wire.beginTransmission(address);
     Wire.write(from);
     Wire.endTransmission();

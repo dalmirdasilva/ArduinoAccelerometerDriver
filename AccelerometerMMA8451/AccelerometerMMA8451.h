@@ -42,19 +42,6 @@ class AccelerometerMMA8451 : public Accelerometer {
      * The device address.
      */
     unsigned char address;
-    
-    /**
-     * Holds the current device state.
-     * 
-     * It is important to hold this on the object to avoid
-     * unnecessary read operations on the device.
-     */
-    DeviceActivation activation;
-    
-    /**
-     * Holds the current Dynamic Range of the device.
-     */
-    DynamicRange range;
 
     /**
      * Internal registers.
@@ -192,6 +179,19 @@ class AccelerometerMMA8451 : public Accelerometer {
         PH_FILTER_CUTOFF_2 = 0x02,
         PH_FILTER_CUTOFF_3 = 0x03
     };
+    
+    /**
+     * Holds the current device state.
+     * 
+     * It is important to hold this on the object to avoid
+     * unnecessary read operations on the device.
+     */
+    DeviceActivation activation;
+    
+    /**
+     * Holds the current Dynamic Range of the device.
+     */
+    DynamicRange range;
 
 public:
 
@@ -263,7 +263,7 @@ public:
      * 
      * @param activation
      */
-    void activation(DeviceActivation activation);
+    void deviceActivation(DeviceActivation activation);
 
     /**
      * Put sensor into Standby Mode
@@ -273,7 +273,7 @@ public:
      * Return with previous value of System Control 1 Register.
      */
     inline void standby() {
-        activation(DEACTIVATE);
+        deviceActivation(DEACTIVATE);
     }
 
     /**
@@ -284,7 +284,7 @@ public:
      * Return with previous value of System Control 1 Register.
      */
     inline void active() {
-        activation(ACTIVATE);
+        deviceActivation(ACTIVATE);
     }
 
     /**
@@ -379,7 +379,7 @@ public:
      * @param buf               The buffer to be used.
      * @param len               The number of bytes to write.
      */
-    void AccelerometerMMA8451::writeRegisterBlock(unsigned char to, unsigned char* buf, int len);
+    void writeRegisterBlock(unsigned char to, unsigned char* buf, unsigned char len);
 
     /**
      * Reads a block of data from the device starting at the 'from' register.
@@ -388,7 +388,7 @@ public:
      * @param buf               The buffer to be used.
      * @param len               The number of bytes to read.
      */
-    void AccelerometerMMA8451::readRegisterBlock(unsigned char from, unsigned char* buf, int len);
+    void readRegisterBlock(unsigned char from, unsigned char* buf, unsigned char len);
 
 private:
 
