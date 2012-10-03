@@ -413,15 +413,43 @@ private:
      * F = 1/2 + 1/16 + 1/32 + 1/64 + 1/512 + 1/2048 = 611816406
      * 
      * Result: -5.611816406
+     * 
+     * We do not need to do all those operations, we can just compute the 
+     * maximum value of the fractional part and use it to divide the current 
+     * value.
+     * 
+     * Ex:
+     * 
+     * In this case:
+     * 1 101 1001 1100 1010
+     * 
+     * The maximum value of the fraction part is: 0x0fff
+     * The current value is: 0x09ca
+     * 
+     * Dividing the current value by the maximum value plus one (because we 
+     * never should get 1.0 as the results):
+     * 
+     * 0x09ca / (0x0fff + 1) = 0x0.9ca
+     * 
+     * In decimal = 0.611816406
      */
     float convertToG(unsigned char buf[2]);
 
     /**
+     * Configures the register.
+     * 
+     * Basically it reads the register from the device. Applies the given 
+     * mask on such register and makes an OR bitwise operation whit the
+     * v value. 
+     * 
+     * (the v value will be masked to only use the bits of the 
+     * corresponding mask).
      * 
      * @param reg
      * @param mask
      * @param v
      */
-    void configureRegisterBits(Register reg, Mask mask, unsigned char v);};
+    void configureRegisterBits(Register reg, Mask mask, unsigned char v);
+};
 
 #endif /* __ARDUINO_DRIVER_ACCELEROMETER_MMA8451_H__ */
