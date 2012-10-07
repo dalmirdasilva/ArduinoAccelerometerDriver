@@ -54,7 +54,7 @@ void AccelerometerMMA8451::setHighPassFilterCutoffFrequency(HighPassFilterCutoff
     active();
 }
 
-void AccelerometerMMA8451::highPassFilteredData(boolean filtered) {
+void AccelerometerMMA8451::highPassFilteredData(bool filtered) {
     unsigned char v = 0x00;
     if (filtered) {
         v = HPF_OUT_MASK;
@@ -62,7 +62,7 @@ void AccelerometerMMA8451::highPassFilteredData(boolean filtered) {
     configureRegisterBits(XYZ_DATA_CFG, HPF_OUT_MASK, v);
 }
 
-boolean AccelerometerMMA8451::isDataReady() {
+bool AccelerometerMMA8451::isDataReady() {
     return ((readRegister(STATUS) & ZYXDR_MASK) != 0);
 }
 
@@ -91,12 +91,12 @@ void AccelerometerMMA8451::readXYZ(unsigned char buf[6]) {
 float AccelerometerMMA8451::convertToG(unsigned char buf[2]) {
     float g = 0.0;
     int aux = 0;
-    int frac_mask = 0x3fff >> range;
+    int frac_max = 0x3fff >> range;
     aux |= buf[1];
     aux <<= 8;
     aux |= buf[0];
     g += ((buf[1] & 0x70) >> 6 - range);
-    g +=  (aux & frac_mask) / (float)(frac_mask + 1);
+    g +=  (aux & frac_max) / (float)(frac_max + 1);
     if (buf[1] & 0x80) {
         return -(g);
     }

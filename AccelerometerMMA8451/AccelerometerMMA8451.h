@@ -42,6 +42,20 @@ class AccelerometerMMA8451 : public Accelerometer {
      * The device address.
      */
     unsigned char address;
+    
+    /**
+     * Holds the current device state.
+     * 
+     * It is important to hold this on the object to avoid
+     * unnecessary read operations on the device.
+     */
+    DeviceActivation activation;
+    
+    /**
+     * Holds the current Dynamic Range of the device.
+     */
+    DynamicRange range;
+public:
 
     /**
      * Internal registers.
@@ -174,26 +188,11 @@ class AccelerometerMMA8451 : public Accelerometer {
      * See Table 8. HP_FILTER_CUTOFF Setting Options.
      */
     enum HighPassFilterCutoffFrequency {
-        PH_FILTER_CUTOFF_0 = 0x00,
-        PH_FILTER_CUTOFF_1 = 0x01,
-        PH_FILTER_CUTOFF_2 = 0x02,
-        PH_FILTER_CUTOFF_3 = 0x03
+        HP_FILTER_CUTOFF_0 = 0x00,
+        HP_FILTER_CUTOFF_1 = 0x01,
+        HP_FILTER_CUTOFF_2 = 0x02,
+        HP_FILTER_CUTOFF_3 = 0x03
     };
-    
-    /**
-     * Holds the current device state.
-     * 
-     * It is important to hold this on the object to avoid
-     * unnecessary read operations on the device.
-     */
-    DeviceActivation activation;
-    
-    /**
-     * Holds the current Dynamic Range of the device.
-     */
-    DynamicRange range;
-
-public:
 
     /**
      * Public constructor.
@@ -254,7 +253,7 @@ public:
      * 
      * @return 
      */
-    boolean isDataReady();
+    bool isDataReady();
 
     /**
      * Device activation.
@@ -356,7 +355,7 @@ public:
      * data by setting or clearing the HPF_Out bit in the XYZ_Data_Cfg Register 
      * 0x0E. The following code example shows how to set the HPF_Out bit.
      */
-    void highPassFilteredData(boolean filtered);
+    void highPassFilteredData(bool filtered);
     
     /**
      * Writes into the sensor register.
@@ -410,7 +409,7 @@ private:
      * We have:
      * S = -
      * I = 5
-     * F = 1/2 + 1/16 + 1/32 + 1/64 + 1/512 + 1/2048 = 611816406
+     * F = 1/2 + 1/16 + 1/32 + 1/64 + 1/512 + 1/2048 = 0.611816406
      * 
      * Result: -5.611816406
      * 
