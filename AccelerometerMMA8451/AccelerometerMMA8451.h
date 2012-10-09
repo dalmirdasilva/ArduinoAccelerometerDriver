@@ -131,11 +131,14 @@ public:
     /**
      * Dynamic range.
      * Table 3. Full Scale Selection
+     * 
+     * <pre>
      * FS1 FS0  g Range
      * 0    0   ±2g
      * 0    1   ±4g
      * 1    0   ±8g
      * 1    1   —
+     * </pre>
      */
     enum DynamicRange {
         DR_2G = 0x00,
@@ -146,6 +149,7 @@ public:
     /**
      * Table 5. Output Data Rates
      * 
+     * <pre>
      * DR2  DR1 DR0 Output      Data Rate (ODR) Time Between Data Samples
      * 0    0   0   800 Hz      1.25 ms
      * 0    0   1   400 Hz      2.5 ms
@@ -155,7 +159,7 @@ public:
      * 1    0   1   12.5 Hz     80 ms
      * 1    1   0   6.25 Hz     160 ms
      * 1    1   1   1.563 Hz    640 ms
-     * 
+     * </pre>
      */
     enum OutputDataRate {
         ODR_800HZ_1_25_MS = 0x00,
@@ -171,11 +175,13 @@ public:
     /**
      * Oversampling Mode.
      * 
+     * <pre>
      * MODS1    MODS0 
      * 0        0       Normal
      * 0        1       Low noise, low power
      * 1        0       High resolution
      * 1        1       Low power
+     * </pre>
      */
     enum OversamplingMode {
         NORMAL_MODS = 0x00,
@@ -297,11 +303,13 @@ public:
      * 
      * Table 3. Full Scale Selection
      * 
+     * <pre>
      * FS1  FS0 g Range
      * 0    0   ±2g
      * 0    1   ±4g
      * 1    0   ±8g
      * 1    1   —
+     * </pre>
      */
     void setDynamicRange(DynamicRange range);
 
@@ -394,7 +402,9 @@ private:
     /**
      * Converts an array of chars into a float type.
      * 
+     * <pre>
      * Assuming:
+     * 
      * rep:  S III FFFF FFFF FFFF
      * bits: b bbb bbbb bbbb bbbb
      * 
@@ -431,6 +441,7 @@ private:
      * 0x09ca / (0x0fff + 1) = 0x0.9ca
      * 
      * In decimal = 0.611816406
+     * </pre>
      */
     float convertToG(unsigned char buf[2]);
 
