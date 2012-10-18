@@ -23,150 +23,136 @@ AccelerometerMMA8451::AccelerometerMMA8451(unsigned char sa0, int sclPin, int sd
 }
 
 void AccelerometerMMA8451::deviceActivation(DeviceActivation activation) {
-    configureRegisterBits(Register::Location::CTRL_REG1, Register::Mask::ACTIVE_MASK, (unsigned char) activation);
+    configureRegisterBits(CTRL_REG1, CTRL_REG1_ACTIVE, (unsigned char) activation);
 }
 
 bool AccelerometerMMA8451::isDataReady() {
-    Register::STATUSbits status = (Register::STATUSbits) readRegister(Register::Location::STATUS);
+    STATUSbits status;
+    status.value = readRegister(STATUS);
     return (bool) status.ZYXDR;
 }
 
 float AccelerometerMMA8451::readXg() {
     unsigned char buf[2];
-    readRegisterBlock(Register::Location::OUT_X_MSB, buf, 2);
+    readRegisterBlock(OUT_X_MSB, buf, 2);
     return convertToG(buf);
 }
 
 float AccelerometerMMA8451::readYg() {
     unsigned char buf[2];
-    readRegisterBlock(Register::Location::OUT_Y_MSB, buf, 2);
+    readRegisterBlock(OUT_Y_MSB, buf, 2);
     return convertToG(buf);
 }
 
 float AccelerometerMMA8451::readZg() {
     unsigned char buf[2];
-    readRegisterBlock(Register::Location::OUT_Z_MSB, buf, 2);
+    readRegisterBlock(OUT_Z_MSB, buf, 2);
     return convertToG(buf);
 }
 
-void inline AccelerometerMMA8451::readXYZ(unsigned char buf[6]) {
-    readRegisterBlock(Register::Location::OUT_X_MSB, buf, 6);
+void AccelerometerMMA8451::readXYZ(unsigned char buf[6]) {
+    readRegisterBlock(OUT_X_MSB, buf, 6);
 }
 
 void AccelerometerMMA8451::setDynamicRange(DynamicRange range) {
-    configureRegisterBits(Register::Location::XYZ_DATA_CFG, 
-            Register::Mask::XYZ_DATA_CFG_FS, (unsigned char) range);
+    configureRegisterBits(XYZ_DATA_CFG, XYZ_DATA_CFG_FS, (unsigned char) range);
     xyzDataCfg.FS = (unsigned char) range;
 }
 
 // AN4068
-void inline AccelerometerMMA8451::setOutputDataRate(OutputDataRate rate) {
-    configureRegisterBits(Register::Location::CTRL_REG1, 
-            Register::Mask::CTRL_REG1_DR, ((unsigned char)rate << 3));
+void AccelerometerMMA8451::setOutputDataRate(OutputDataRate rate) {
+    configureRegisterBits(CTRL_REG1, CTRL_REG1_DR, ((unsigned char)rate << 3));
 }
 
 // AN4068
-void inline AccelerometerMMA8451::setPortraitLandscapeDetection(bool enable) {
-    configureRegisterBits(Register::Location::PL_CFG, 
-            Register::Mask::PL_CFG_PL_EN, (enable ? Register::Mask::PL_CFG_PL_EN : 0x00));
+void AccelerometerMMA8451::setPortraitLandscapeDetection(bool enable) {
+    configureRegisterBits(PL_CFG, PL_CFG_PL_EN, (enable ? PL_CFG_PL_EN : 0x00));
 }
 
 // AN4068
-void inline AccelerometerMMA8451::setBackFrontTrip(BackFrontTrip trip) {
-    configureRegisterBits(Register::Location::PL_BF_ZCOMP, 
-            Register::Mask::PL_BF_ZCOMP_BKFR, ((unsigned char) trip << 6));
+void AccelerometerMMA8451::setBackFrontTrip(BackFrontTrip trip) {
+    configureRegisterBits(PL_BF_ZCOMP, PL_BF_ZCOMP_BKFR, ((unsigned char) trip << 6));
 }
 
 // AN4068
-void inline AccelerometerMMA8451::setZLockThresholdAngle(ZLockThresholdAngle angle) {
-    configureRegisterBits(Register::Location::PL_BF_ZCOMP, 
-            Register::Mask::PL_BF_ZCOMP_ZLOCK, (unsigned char) angle);
+void AccelerometerMMA8451::setZLockThresholdAngle(ZLockThresholdAngle angle) {
+    configureRegisterBits(PL_BF_ZCOMP, PL_BF_ZCOMP_ZLOCK, (unsigned char) angle);
 }
 
 // AN4068
-void inline AccelerometerMMA8451::setPortraitLandscapeThresholdAngle(unsigned char angle) {
-    configureRegisterBits(Register::Location::P_L_THS_REG, 
-            Register::Mask::P_L_THS_REG_P_L_THS, ((unsigned char) angle << 3));
+void AccelerometerMMA8451::setPortraitLandscapeThresholdAngle(unsigned char angle) {
+    configureRegisterBits(P_L_THS_REG, P_L_THS_REG_P_L_THS, ((unsigned char) angle << 3));
 }
 
 // AN4068
-void inline AccelerometerMMA8451::setHysteresisAngle(HysteresisAngle angle) {
-    configureRegisterBits(Register::Location::P_L_THS_REG, 
-            Register::Mask::P_L_THS_REG_HYS, (unsigned char) angle);
+void AccelerometerMMA8451::setHysteresisAngle(HysteresisAngle angle) {
+    configureRegisterBits(P_L_THS_REG, P_L_THS_REG_HYS, (unsigned char) angle);
 }
 
 // AN4068
-void inline AccelerometerMMA8451::enableInterrupt(Interrupt interrupt) {
-    configureRegisterBits(Register::Location::CTRL_REG4, 
-            (Register::Mask) interrupt, (unsigned char) interrupt);
+void AccelerometerMMA8451::enableInterrupt(Interrupt interrupt) {
+    configureRegisterBits(CTRL_REG4, (Mask) interrupt, (unsigned char) interrupt);
 }
 
 // AN4068
-void inline AccelerometerMMA8451::disableInterrupt(Interrupt interrupt) {
-    configureRegisterBits(Register::Location::CTRL_REG4, 
-            (Register::Mask) interrupt, 0);
+void AccelerometerMMA8451::disableInterrupt(Interrupt interrupt) {
+    configureRegisterBits(CTRL_REG4, (Mask) interrupt, 0);
 }
 
 // AN4068
-void inline AccelerometerMMA8451::routeInterruptToInt1(Interrupt interrupt) {
-    configureRegisterBits(Register::Location::CTRL_REG5, 
-            (Register::Mask) interrupt, (unsigned char) interrupt);
+void AccelerometerMMA8451::routeInterruptToInt1(Interrupt interrupt) {
+    configureRegisterBits(CTRL_REG5, (Mask) interrupt, (unsigned char) interrupt);
 }
 
 // AN4068
-void inline AccelerometerMMA8451::routeInterruptToInt2(Interrupt interrupt) {
-    configureRegisterBits(Register::Location::CTRL_REG5, 
-            (Register::Mask) interrupt, 0);
+void AccelerometerMMA8451::routeInterruptToInt2(Interrupt interrupt) {
+    configureRegisterBits(CTRL_REG5, (Mask) interrupt, 0);
 }
 
-void inline AccelerometerMMA8451::setAslpOutputDataRate(AslpOutputDataRate rate) {
-    configureRegisterBits(Register::Location::CTRL_REG1, 
-            Register::Mask::CTRL_REG1_ASLP_RATE, ((unsigned char)rate << 6));
+void AccelerometerMMA8451::setAslpOutputDataRate(AslpOutputDataRate rate) {
+    configureRegisterBits(CTRL_REG1, CTRL_REG1_ASLP_RATE, ((unsigned char)rate << 6));
 }
 
-void inline AccelerometerMMA8451::setOversamplingMode(OversamplingMode mode) {
-    configureRegisterBits(Register::Location::CTRL_REG2, 
-            Register::Mask::CTRL_REG2_MODS, (unsigned char) mode);
+void AccelerometerMMA8451::setOversamplingMode(OversamplingMode mode) {
+    configureRegisterBits(CTRL_REG2, CTRL_REG2_MODS, (unsigned char) mode);
 }
 
-void inline AccelerometerMMA8451::setHighPassFilterCutoffFrequency(HighPassFilterCutoffFrequency frequency) {
-    configureRegisterBits(Register::Location::HP_FILTER_CUTOFF, 
-            Register::Mask::HP_FILTER_CUTOFF_SEL, frequency);
+void AccelerometerMMA8451::setHighPassFilterCutoffFrequency(HighPassFilterCutoffFrequency frequency) {
+    configureRegisterBits(HP_FILTER_CUTOFF, HP_FILTER_CUTOFF_SEL, frequency);
 }
 
 void AccelerometerMMA8451::highPassFilteredData(bool filtered) {
-    Register::Mask m = 0x00;
+    Mask m;
     if (filtered) {
-        m = Register::Mask::XYZ_DATA_CFG_HPF_OUT;
+        m = XYZ_DATA_CFG_HPF_OUT;
     }
-    configureRegisterBits(Register::Location::XYZ_DATA_CFG, 
-            Register::Mask::XYZ_DATA_CFG_HPF_OUT, (unsigned char) m);
+    configureRegisterBits(XYZ_DATA_CFG, XYZ_DATA_CFG_HPF_OUT, (unsigned char) m);
 }
 
 void AccelerometerMMA8451::setFifoBufferOverflowMode(FifoBufferOverflowMode mode) {
-    configureRegisterBits(Register::Location::F_SETUP, 
-            Register::Mask::F_SETUP_F_MODE, (unsigned char) FIFO_DISABLED);
-    configureRegisterBits(Register::Location::F_SETUP, 
-            Register::Mask::F_SETUP_F_MODE, (unsigned char)(mode << 6));
+    configureRegisterBits(F_SETUP, F_SETUP_F_MODE, (unsigned char) FIFO_DISABLED);
+    configureRegisterBits(F_SETUP, F_SETUP_F_MODE, (unsigned char)(mode << 6));
 }
 
 void AccelerometerMMA8451::setFifoWatermark(unsigned char watermark) {
-    configureRegisterBits(Register::Location::F_SETUP, 
-            Register::Mask::F_SETUP_F_WMRK, watermark);
+    configureRegisterBits(F_SETUP, F_SETUP_F_WMRK, watermark);
 }
 
 bool AccelerometerMMA8451::getFifoGateError() {
-    Register::SYSMODbits sysmod = (Register::SYSMODbits) readRegister(Register::Location::SYSMOD);
+    SYSMODbits sysmod;
+    sysmod.value = readRegister(SYSMOD);
     return (bool) sysmod.FGERR;
 }
 
 unsigned char AccelerometerMMA8451::getFifoFgt() {
-    Register::SYSMODbits sysmod = (Register::SYSMODbits) readRegister(Register::Location::SYSMOD);
+    SYSMODbits sysmod;
+    sysmod.value = readRegister(SYSMOD);
     return (unsigned char) sysmod.FGT;
 }
 
 unsigned char AccelerometerMMA8451::getSysmod() {
-    Register::SYSMODbits sysmod = (Register::SYSMODbits) readRegister(Register::Location::SYSMOD);
+    SYSMODbits sysmod;
+    sysmod.value = readRegister(SYSMOD);
     return (unsigned char) sysmod.SYSMOD;
 }
 
@@ -186,7 +172,7 @@ float AccelerometerMMA8451::convertToG(unsigned char buf[2]) {
     return g;
 }
 
-void AccelerometerMMA8451::configureRegisterBits(Register::Location location, Register::Mask mask, unsigned char v) {
+void AccelerometerMMA8451::configureRegisterBits(Location location, Mask mask, unsigned char v) {
     unsigned char n;
     n = readRegister(location);
     n &= ~((unsigned char)mask);
@@ -194,11 +180,11 @@ void AccelerometerMMA8451::configureRegisterBits(Register::Location location, Re
     writeRegister(location, n);
 }
 
-void AccelerometerMMA8451::writeRegister(Register::Location location, unsigned char v) {
+void AccelerometerMMA8451::writeRegister(Location location, unsigned char v) {
     writeRegisterBlock((unsigned char) location, &v, 1);
 }
 
-unsigned char AccelerometerMMA8451::readRegister(Register::Location location) {
+unsigned char AccelerometerMMA8451::readRegister(Location location) {
     unsigned char v;
     readRegisterBlock((unsigned char) location, &v, 1);
     return v;
