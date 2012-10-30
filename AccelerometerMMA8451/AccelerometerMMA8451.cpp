@@ -13,12 +13,8 @@
 
 #include "AccelerometerMMA8451.h"
 
-AccelerometerMMA8451::AccelerometerMMA8451(unsigned char sa0, int sclPin, int sdaPin, int int1Pin, int int2Pin) {
+AccelerometerMMA8451::AccelerometerMMA8451(bool sa0) {
     this->address = 0x1c | (sa0 & 0x01);
-    this->sclPin = sclPin;
-    this->sdaPin = sdaPin;
-    this->int1Pin = int1Pin;
-    this->int2Pin = int2Pin;
     Wire.begin();
 }
 
@@ -59,52 +55,42 @@ void AccelerometerMMA8451::setDynamicRange(DynamicRange range) {
     xyzDataCfg.FS = (unsigned char) range;
 }
 
-// AN4068
 void AccelerometerMMA8451::setOutputDataRate(OutputDataRate rate) {
     configureRegisterBits(CTRL_REG1, CTRL_REG1_DR, ((unsigned char)rate << 3));
 }
 
-// AN4068
 void AccelerometerMMA8451::setPortraitLandscapeDetection(bool enable) {
     configureRegisterBits(PL_CFG, PL_CFG_PL_EN, (enable ? PL_CFG_PL_EN : 0x00));
 }
 
-// AN4068
 void AccelerometerMMA8451::setBackFrontTrip(BackFrontTrip trip) {
     configureRegisterBits(PL_BF_ZCOMP, PL_BF_ZCOMP_BKFR, ((unsigned char) trip << 6));
 }
 
-// AN4068
 void AccelerometerMMA8451::setZLockThresholdAngle(ZLockThresholdAngle angle) {
     configureRegisterBits(PL_BF_ZCOMP, PL_BF_ZCOMP_ZLOCK, (unsigned char) angle);
 }
 
-// AN4068
-void AccelerometerMMA8451::setPortraitLandscapeThresholdAngle(unsigned char angle) {
+void AccelerometerMMA8451::setPortraitLandscapeThresholdAngle(PortraitLandscapeThresholdAngle angle) {
     configureRegisterBits(P_L_THS_REG, P_L_THS_REG_P_L_THS, ((unsigned char) angle << 3));
 }
 
-// AN4068
 void AccelerometerMMA8451::setHysteresisAngle(HysteresisAngle angle) {
     configureRegisterBits(P_L_THS_REG, P_L_THS_REG_HYS, (unsigned char) angle);
 }
 
-// AN4068
 void AccelerometerMMA8451::enableInterrupt(Interrupt interrupt) {
     configureRegisterBits(CTRL_REG4, (Mask) interrupt, (unsigned char) interrupt);
 }
 
-// AN4068
 void AccelerometerMMA8451::disableInterrupt(Interrupt interrupt) {
     configureRegisterBits(CTRL_REG4, (Mask) interrupt, 0);
 }
 
-// AN4068
 void AccelerometerMMA8451::routeInterruptToInt1(Interrupt interrupt) {
     configureRegisterBits(CTRL_REG5, (Mask) interrupt, (unsigned char) interrupt);
 }
 
-// AN4068
 void AccelerometerMMA8451::routeInterruptToInt2(Interrupt interrupt) {
     configureRegisterBits(CTRL_REG5, (Mask) interrupt, 0);
 }
@@ -202,7 +188,7 @@ void AccelerometerMMA8451::writeRegisterBlock(unsigned char to, unsigned char* b
 void AccelerometerMMA8451::readRegisterBlock(unsigned char from, unsigned char* buf, unsigned char len) {
     Wire.beginTransmission(address);
     Wire.write(from);
-    Wire.endTransmission();
+    Wire.endTransmission(false);
     Wire.requestFrom(address, len);
     for (int i = 0; i < len; i++) {
         while (!Wire.available());

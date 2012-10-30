@@ -2,17 +2,10 @@
 #include <Accelerometer.h>
 #include <AccelerometerMMA8451.h>
 
-#define SAO_PIN 7
-#define SCL_PIN A4
-#define SDA_PIN A5
-#define INT1_PIN 2
-#define INT2_PIN 3
-
-AccelerometerMMA8451 acc(SAO_PIN, SCL_PIN, SDA_PIN, INT1_PIN, INT2_PIN);
+AccelerometerMMA8451 acc(0);
 
 void accelerometerHandler() {
-  Serial.println("Got interrupt.");
-
+  /*
   // Register 0x0C gives the status of any of the interrupts that are enabled in the entire device.
   // • An interrupt service routine must be set to handle enabling and then clearing of the interrupts. 
   //   Register 0x0C will be read to determine which interrupt caused the event.
@@ -22,8 +15,9 @@ void accelerometerHandler() {
 
   //Determine the source of the interrupt by first reading the system interrupt register
   AccelerometerMMA8451::INT_SOURCEbits source;
-  source.value = acc.readRegister(AccelerometerMMA8451::INT_SOURCE);
   
+  source.value = 1;//acc.readRegister(AccelerometerMMA8451::INT_SOURCE);
+ 
   // Set up Case statement here to service all of the possible interrupts
   if (source.SRC_LNDPRT) {
    
@@ -31,12 +25,18 @@ void accelerometerHandler() {
     //Update Image on Display Screen based on the data stored
 
     //Read the PL State from the Status Register, clear the interrupt, PL Status Register
-    acc.readRegister(AccelerometerMMA8451::PL_STATUS);
-  }
+    //acc.readRegister(AccelerometerMMA8451::PL_STATUS);
+    
+  }*/
+    digitalWrite(13, HIGH);
+    
+    //Serial.println("got");
 }
 
 void setup() {
+  
   Serial.begin(9600);
+  pinMode(13, OUTPUT);
   
   // Step 1: Put the part into Standby Mode
   acc.standby();
@@ -54,7 +54,7 @@ void setup() {
   acc.setZLockThresholdAngle(AccelerometerMMA8451::ZLOCK_33);
   
   // Step 6: Set the Trip Threshold Angle
-  acc.setPortraitLandscapeThresholdAngle(0x19);
+  acc.setPortraitLandscapeThresholdAngle(AccelerometerMMA8451::P_L_THS_75);
   
   // Step 7: Set the Hysteresis Angle
   acc.setHysteresisAngle(AccelerometerMMA8451::HYS_14);
@@ -74,9 +74,38 @@ void setup() {
   // Step 11: Put the device in Active Mode
   acc.activate();
   
+  Serial.println("Activating...");
   // Step 12: Write a Service Routine to Service the Interrupt
-  attachInterrupt(0, accelerometerHandler, CHANGE);
+  
+  //attachInterrupt(0, accelerometerHandler, CHANGE);
+  //attachInterrupt(1, accelerometerHandler, CHANGE);
 }
 
 void loop() {
+  
+    unsigned char buf[6];
+    int sample, x, y, z;
+    acc.readRegisterBlock(AccelerometerMMA8451::OUT_X_MSB, buf, 6);
+    x = buf[0] << 2 | buf[1] >> 6 & 0x3;
+    y = buf[2] << 2 | buf[3] >> 6 & 0x3;
+    z = buf[4] << 2 | buf[5] >> 6 & 0x3;
+    if (x > 511) x = x - 1024;
+    if (y > 511) y = y - 1024 ;
+    if (z > 511) z = z - 1024;
+        
+    Serial.print("x: ");
+    Serial.println(x);
+    Serial.print("y: ");
+    Serial.println(y);
+    Serial.print("z: ");
+    Serial.println(z);
+    Serial.println("---------------");
+    digitalWrite(13, LOW);
+    Serial.println(acc.readRegister(AccelerometerMMA8451::P_L_THS_REG), HEX);
+    Serial.println(acc.readRegister(AccelerometerMMA8451::PL_BF_ZCOMP), HEX);
+    Serial.println(acc.readRegister(AccelerometerMMA8451::PL_CFG), HEX);
+    Serial.println(acc.readRegister(AccelerometerMMA8451::CTRL_REG1), HEX);
+    Serial.println(acc.readRegister(AccelerometerMMA8451::CTRL_REG4), HEX);
+    Serial.println(acc.readRegister(AccelerometerMMA8451::CTRL_REG5), HEX);
+    delay(2000);
 }

@@ -12,6 +12,7 @@
 #define __ARDUINO_DRIVER_ACCELEROMETER_MMA8451_H__ 1
 
 #include <Wire.h>
+#include <Arduino.h>
 #include <Accelerometer.h>
 
 class AccelerometerMMA8451 : public Accelerometer {
@@ -801,6 +802,19 @@ public:
         ZLOCK_42 = 0x07
     };
     
+    enum PortraitLandscapeThresholdAngle {
+        P_L_THS_15 = 0x07,
+        P_L_THS_20 = 0x09,
+        P_L_THS_30 = 0x0c,
+        P_L_THS_35 = 0x0d,
+        P_L_THS_40 = 0x0f,
+        P_L_THS_45 = 0x10,
+        P_L_THS_55 = 0x13,
+        P_L_THS_60 = 0x14,
+        P_L_THS_70 = 0x17,
+        P_L_THS_75 = 0x19
+    };
+    
     /**
      * Trip Angles with Hysteresis for 45° Angle
      * 
@@ -898,12 +912,9 @@ public:
     /**
      * Public constructor.
      * 
-     * @param sclPin
-     * @param sdaPin
-     * @param int1Pin
-     * @param int2Pin
+     * @param sa0       The LSBit of the address.
      */
-    AccelerometerMMA8451(unsigned char sa0, int sclPin, int sdaPin, int int1Pin, int int2Pin);
+    AccelerometerMMA8451(bool sa0);
 
     /**
      * Reads the x axis from the accelerometer device.
@@ -1064,7 +1075,7 @@ public:
      * 
      * @param angle             The angle.
      */
-    void setPortraitLandscapeThresholdAngle(unsigned char angle);
+    void setPortraitLandscapeThresholdAngle(PortraitLandscapeThresholdAngle angle);
     
     /**
      * Sets the Hysteresis Angle.
@@ -1230,16 +1241,6 @@ public:
     void readRegisterBlock(unsigned char from, unsigned char* buf, unsigned char len);
 
 protected:
-
-    /**
-     * The scl pin.
-     */
-    int sclPin;
-
-    /**
-     * The sda pin.
-     */
-    int sdaPin;
 
     /**
      * The interruption 1 pin.

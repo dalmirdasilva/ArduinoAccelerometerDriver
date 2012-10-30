@@ -2,13 +2,7 @@
 #include <Accelerometer.h>
 #include <AccelerometerMMA8451.h>
 
-#define SAO_PIN 7
-#define SCL_PIN A4
-#define SDA_PIN A5
-#define INT1_PIN 2
-#define INT2_PIN 3
-
-AccelerometerMMA8451 acc(SAO_PIN, SCL_PIN, SDA_PIN, INT1_PIN, INT2_PIN);
+AccelerometerMMA8451 acc(0);
 
 void accelerometerHandler() {
   Serial.println("Got interrupt.");
