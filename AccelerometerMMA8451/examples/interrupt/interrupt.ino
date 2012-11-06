@@ -3,6 +3,9 @@
 #include <AccelerometerMMA8451.h>
 
 AccelerometerMMA8451 acc(0);
+bool ready = false;
+AccelerometerMMA8451::INT_SOURCEbits intSource;
+unsigned char buf[6];
 
 void processXYZ(unsigned char* buf) {
   for (int i = 0; i < 6; i++) {
@@ -10,26 +13,14 @@ void processXYZ(unsigned char* buf) {
     Serial.print(": 0x");
     Serial.println(buf[i], HEX);
   }
+  for (int i = 0; i < 6; i += 2) {
+    Serial.print("> ");
+    Serial.println(acc.convertToG(&buf[i], 2));
+  }
 }
 
 void isr() {
-  
-  AccelerometerMMA8451::INT_SOURCEbits intSource;
-  unsigned char buf[6];
-  
-  // Clear the MCU's interrupt flag (no idea)
-  // CLEAR_MMA8451Q_INTERRUPT
-  
-  // Go read the Interrupt Source Register
-  intSource.value = acc.readRegister(AccelerometerMMA8451::INT_SOURCE);
-  
-  if (intSource.SRC_DRDY == 1) {
-  
-    // Read 14/12/10-bit XYZ results using a 6 byte IIC access.
-    acc.readRegisterBlock(AccelerometerMMA8451::OUT_X_MSB, buf, 6);
-    
-    processXYZ(buf);
-  }
+  ready = true;
 }
 
 void setup() {
@@ -61,7 +52,19 @@ void setup() {
 }
 
 void loop() {
-
-  // Do something.
+  
+  if (ready) {
+    // Go read the Interrupt Source Register
+    intSource.value = acc.readRegister(AccelerometerMMA8451::INT_SOURCE);
+    
+    if (intSource.SRC_DRDY == 1) {
+    
+      // Read 14/12/10-bit XYZ results using a 6 byte IIC access.
+      acc.readXYZ(buf);
+      
+      processXYZ(buf);
+    }
+    ready = false;
+  }
 }
 

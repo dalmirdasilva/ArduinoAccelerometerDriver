@@ -1296,6 +1296,13 @@ public:
      */
     void readRegisterBlock(unsigned char from, unsigned char* buf, unsigned char len);
 
+    /**
+     * Converts an array of chars into a float type.
+     * 
+     * @param buf               1 (8-bit) our 2 (14-bit) bytes to be converted.  
+     */
+    float convertToG(unsigned char* buf, unsigned char len);
+
 protected:
 
     /**
@@ -1323,50 +1330,12 @@ protected:
     XYZ_DATA_CFGbits xyzDataCfg;
 
     /**
-     * Converts an array of chars into a float type.
+     * Holds the system Control 1 Register
      * 
-     * <pre>
-     * Assuming:
-     * 
-     * rep:  S III FFFF FFFF FFFF
-     * bits: b bbb bbbb bbbb bbbb
-     * 
-     * S = Signal
-     * I = Integer part
-     * F = Fractional part
-     * 
-     * With:
-     * S III FFFF FFFF FFFF
-     * 1 101 1001 1100 1010
-     * 
-     * We have:
-     * S = -
-     * I = 5
-     * F = 1/2 + 1/16 + 1/32 + 1/64 + 1/512 + 1/2048 = 0.611816406
-     * 
-     * Result: -5.611816406
-     * 
-     * We do not need to do all those operations, we can just compute the 
-     * maximum value of the fractional part and use it to divide the current 
-     * value.
-     * 
-     * Ex:
-     * 
-     * In this case:
-     * 1 101 1001 1100 1010
-     * 
-     * The maximum value of the fraction part is: 0x0fff
-     * The current value is: 0x09ca
-     * 
-     * Dividing the current value by the maximum value plus one (because we 
-     * never should get 1.0 as the results):
-     * 
-     * 0x09ca / (0x0fff + 1) = 0x0.9ca
-     * 
-     * In decimal = 0.611816406
-     * </pre>
+     * It is important to hold this on the object to avoid
+     * unnecessary read operations on the device.
      */
-    float convertToG(unsigned char buf[2]);
+    CTRL_REG1bits ctrlReg1;
 
     /**
      * Configures the register.

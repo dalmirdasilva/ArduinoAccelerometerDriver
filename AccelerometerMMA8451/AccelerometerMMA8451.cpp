@@ -15,6 +15,8 @@
 
 AccelerometerMMA8451::AccelerometerMMA8451(bool sa0) {
     this->address = 0x1c | (sa0 & 0x01);
+    xyzDataCfg.FS = 0x00;
+    ctrlReg1.F_READ = 0;
     Wire.begin();
 }
 
@@ -29,30 +31,34 @@ bool AccelerometerMMA8451::isDataReady() {
 }
 
 float AccelerometerMMA8451::readXg() {
-    unsigned char buf[2];
-    readRegisterBlock(OUT_X_MSB, buf, 2);
-    return convertToG(buf);
+    unsigned char size = (ctrlReg1.F_READ) ? 1 : 2;
+    unsigned char buf[size];
+    readRegisterBlock(OUT_X_MSB, buf, size);
+    return convertToG(buf, size);
 }
 
 float AccelerometerMMA8451::readYg() {
-    unsigned char buf[2];
-    readRegisterBlock(OUT_Y_MSB, buf, 2);
-    return convertToG(buf);
+    unsigned char size = (ctrlReg1.F_READ) ? 1 : 2;
+    unsigned char buf[size];
+    readRegisterBlock(OUT_Y_MSB, buf, size);
+    return convertToG(buf, size);
 }
 
 float AccelerometerMMA8451::readZg() {
-    unsigned char buf[2];
-    readRegisterBlock(OUT_Z_MSB, buf, 2);
-    return convertToG(buf);
+    unsigned char size = (ctrlReg1.F_READ) ? 1 : 2;
+    unsigned char buf[size];
+    readRegisterBlock(OUT_Z_MSB, buf, size);
+    return convertToG(buf, size);
 }
 
-void AccelerometerMMA8451::readXYZ(unsigned char buf[6]) {
-    readRegisterBlock(OUT_X_MSB, buf, 6);
+void AccelerometerMMA8451::readXYZ(unsigned char* buf) {
+    unsigned char size = (ctrlReg1.F_READ) ? 3 : 6;
+    readRegisterBlock(OUT_X_MSB, buf, size);
 }
 
 void AccelerometerMMA8451::setDynamicRange(DynamicRange range) {
     configureRegisterBits(XYZ_DATA_CFG, XYZ_DATA_CFG_FS, (unsigned char)range);
-    xyzDataCfg.FS = (unsigned char) range;
+    xyzDataCfg.FS = (unsigned char)range;
 }
 
 void AccelerometerMMA8451::setOutputDataRate(OutputDataRate rate) {
@@ -104,6 +110,7 @@ void AccelerometerMMA8451::setAslpOutputDataRate(AslpOutputDataRate rate) {
 }
 
 void AccelerometerMMA8451::setReadMode(ReadMode mode) {
+    ctrlReg1.F_READ = (unsigned char)mode;
     configureRegisterBits(CTRL_REG1, CTRL_REG1_F_READ, (unsigned char)mode << 1);
 }
 
@@ -150,17 +157,31 @@ unsigned char AccelerometerMMA8451::getSysmod() {
     return (unsigned char) sysmod.SYSMOD;
 }
 
-float AccelerometerMMA8451::convertToG(unsigned char buf[2]) {
-    // Needs refactoring
+float AccelerometerMMA8451::convertToG(unsigned char* buf, unsigned char len) {
+    unsigned char negative = 0;
+    unsigned char shift = 14;
     float g = 0.0;
+    int mantissaMask = 0x3fff;
+    int integerMask = 0xf000;
     int aux = 0;
-    int frac_max = 0x3fff >> ((unsigned char)xyzDataCfg.FS);
-    aux |= buf[1];
-    aux <<= 8;
+    int mantissaMax;
     aux |= buf[0];
-    g += ((buf[1] & 0x70) >> 6 - ((unsigned char)xyzDataCfg.FS));
-    g +=  (aux & frac_max) / (float)(frac_max + 1);
-    if (buf[1] & 0x80) {
+    if (len == 1) {
+        mantissaMask >>= 8;
+        integerMask >>= 8;
+        shift -= 8;
+    } else {
+        aux <<= 8;
+        aux |= buf[1];
+    }
+    mantissaMax = mantissaMask >> (unsigned char)xyzDataCfg.FS;
+    if (buf[0] & 0x80) {
+      aux = ~aux + 1;
+      negative = 1;
+    }
+    g += ((aux & integerMask) >> shift - (unsigned char)xyzDataCfg.FS);
+    g +=  (aux & mantissaMax) / (float)(mantissaMax + 1);
+    if (negative) {
         return -(g);
     }
     return g;
