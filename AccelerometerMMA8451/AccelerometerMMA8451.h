@@ -750,7 +750,17 @@ public:
         FIFO_DISABLED = 0x00,
         FIFO_CIRCULAR_BUFFER = 0x01,
         FIFO_STOP_WHEN_OVERFLOWED = 0x02,
-        FIFO_TRIGGER = 0x03,
+        FIFO_TRIGGER = 0x03
+    };
+    
+    /**
+     * Fast Read mode: Data format limited to single Byte Default 
+     * value: 0.
+     * (0: Normal mode 1: Fast Read Mode)
+     */
+    enum ReadMode {
+        FAST_READ = 0x01,
+        NORMAL_READ = 0x00
     };
     
     /**
@@ -907,6 +917,24 @@ public:
         INT_TRANS = 0x20,
         INT_FIFO = 0x40,
         INT_ASLP = 0x80
+    };
+    
+    /**
+     * Interrupt polarity
+     */
+    enum InterruptPolarity {
+        ACTIVE_LOW = 0x00,
+        ACTIVE_HIGH = 0x01
+    };
+    
+    /**
+     * Push-Pull/Open Drain selection on interrupt pad. 
+     * Default value: 0.
+     * 0: Push-Pull; 1: Open Drain
+     */
+    enum PushPullOpenDrain {
+        PUSH_PULL = 0x00,
+        OPEN_DRAIN = 0x01
     };
     
     /**
@@ -1115,6 +1143,13 @@ public:
      * @param interrupt         The interrupt flag.
      */
     void routeInterruptToInt2(Interrupt interrupt);
+        
+    /**
+     * Sets the interrupt polarity
+     * 
+     * @param polarity          The polarity of the interrupt.
+     */
+    void setInterruptPolarity(InterruptPolarity polarity);
     
     /**
      * Sets the sllep output data rate.
@@ -1127,6 +1162,20 @@ public:
      * @param rate              The Output Data Rate.
      */
     void setAslpOutputDataRate(AslpOutputDataRate rate);
+    
+    /**
+     * Set the read mode
+     * 
+     * F_READ bit selects between normal and Fast Read mode. When 
+     * selected, the auto increment counter will skip over the LSB data
+     * bytes. Data read from the FIFO will skip over the LSB data, 
+     * reducing the acquisition time. Note F_READ can only be changed
+     * when FMODE = 00. The F_READ bit applies for both the output 
+     * registers and the FIFO.
+     * 
+     * @param mode              The read mode.
+     */
+    void setReadMode(ReadMode mode);
 
     /**
      * Sets the oversampling mode.
@@ -1207,6 +1256,13 @@ public:
      * Gets the FIFO Sysmode
      */
     unsigned char getSysmod();
+    
+    /**
+     * Sets the selection on interrupt pad.
+     * 
+     * @param ppod            PushPullOpenDrain
+     */
+    void setPushPullOpenDrain(PushPullOpenDrain ppod);
     
     /**
      * Writes into the sensor register.

@@ -6,12 +6,12 @@ AccelerometerMMA8451 acc(0);
 
 void setup() {
     Serial.begin(9600);
+    acc.activate();
 }
 
 void loop() {
     unsigned char buf[6];
     int sample, x, y, z;
-    acc.activate();
     acc.readRegisterBlock(AccelerometerMMA8451::OUT_X_MSB, buf, 6);
     x = buf[0] << 2 | buf[1] >> 6 & 0x3;
     y = buf[2] << 2 | buf[3] >> 6 & 0x3;
@@ -19,7 +19,6 @@ void loop() {
     if (x > 511) x = x - 1024;
     if (y > 511) y = y - 1024 ;
     if (z > 511) z = z - 1024;
-        
     Serial.print("x: ");
     Serial.println(x);
     Serial.print("y: ");
