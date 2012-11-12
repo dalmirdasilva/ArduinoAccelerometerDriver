@@ -165,7 +165,7 @@ float AccelerometerMMA8451::convertToG(unsigned char* buf, unsigned char len) {
     int integerMask = 0xf000;
     int aux = 0;
     int mantissaMax;
-    aux |= buf[0];
+    aux = buf[0];
     if (len == 1) {
         mantissaMask >>= 8;
         integerMask >>= 8;
