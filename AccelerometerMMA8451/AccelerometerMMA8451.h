@@ -1301,7 +1301,7 @@ public:
      * 
      * @param buf               1 (8-bit) our 2 (14-bit) bytes to be converted.  
      */
-    float convertToG(unsigned char* buf, unsigned char len);
+    float convertToG(unsigned char* buf, bool fastRead);
 
 protected:
 

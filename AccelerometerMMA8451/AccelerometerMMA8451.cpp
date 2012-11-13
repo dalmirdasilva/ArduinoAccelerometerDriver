@@ -31,28 +31,32 @@ bool AccelerometerMMA8451::isDataReady() {
 }
 
 float AccelerometerMMA8451::readXg() {
-    unsigned char size = (ctrlReg1.F_READ) ? 1 : 2;
+    bool fastRead = (bool)ctrlReg1.F_READ;
+    unsigned char size = fastRead ? 1 : 2;
     unsigned char buf[size];
     readRegisterBlock(OUT_X_MSB, buf, size);
-    return convertToG(buf, size);
+    return convertToG(buf, fastRead);
 }
 
 float AccelerometerMMA8451::readYg() {
-    unsigned char size = (ctrlReg1.F_READ) ? 1 : 2;
+    bool fastRead = (bool)ctrlReg1.F_READ;
+    unsigned char size = fastRead ? 1 : 2;
     unsigned char buf[size];
     readRegisterBlock(OUT_Y_MSB, buf, size);
-    return convertToG(buf, size);
+    return convertToG(buf, fastRead);
 }
 
 float AccelerometerMMA8451::readZg() {
-    unsigned char size = (ctrlReg1.F_READ) ? 1 : 2;
+    bool fastRead = (bool)ctrlReg1.F_READ;
+    unsigned char size = fastRead ? 1 : 2;
     unsigned char buf[size];
     readRegisterBlock(OUT_Z_MSB, buf, size);
-    return convertToG(buf, size);
+    return convertToG(buf, fastRead);
 }
 
 void AccelerometerMMA8451::readXYZ(unsigned char* buf) {
-    unsigned char size = (ctrlReg1.F_READ) ? 3 : 6;
+    bool fastRead = (bool)ctrlReg1.F_READ;
+    unsigned char size = fastRead ? 3 : 6;
     readRegisterBlock(OUT_X_MSB, buf, size);
 }
 
@@ -86,19 +90,19 @@ void AccelerometerMMA8451::setHysteresisAngle(HysteresisAngle angle) {
 }
 
 void AccelerometerMMA8451::enableInterrupt(Interrupt interrupt) {
-    configureRegisterBits(CTRL_REG4, (Mask) interrupt, (unsigned char)interrupt);
+    configureRegisterBits(CTRL_REG4, (Mask)interrupt, (unsigned char)interrupt);
 }
 
 void AccelerometerMMA8451::disableInterrupt(Interrupt interrupt) {
-    configureRegisterBits(CTRL_REG4, (Mask) interrupt, 0);
+    configureRegisterBits(CTRL_REG4, (Mask)interrupt, 0);
 }
 
 void AccelerometerMMA8451::routeInterruptToInt1(Interrupt interrupt) {
-    configureRegisterBits(CTRL_REG5, (Mask) interrupt, (unsigned char)interrupt);
+    configureRegisterBits(CTRL_REG5, (Mask)interrupt, (unsigned char)interrupt);
 }
 
 void AccelerometerMMA8451::routeInterruptToInt2(Interrupt interrupt) {
-    configureRegisterBits(CTRL_REG5, (Mask) interrupt, 0);
+    configureRegisterBits(CTRL_REG5, (Mask)interrupt, 0);
 }
 
 void AccelerometerMMA8451::setInterruptPolarity(InterruptPolarity polarity) {
@@ -110,8 +114,8 @@ void AccelerometerMMA8451::setAslpOutputDataRate(AslpOutputDataRate rate) {
 }
 
 void AccelerometerMMA8451::setReadMode(ReadMode mode) {
-    ctrlReg1.F_READ = (unsigned char)mode;
     configureRegisterBits(CTRL_REG1, CTRL_REG1_F_READ, (unsigned char)mode << 1);
+    ctrlReg1.F_READ = (unsigned char)mode;
 }
 
 void AccelerometerMMA8451::setOversamplingMode(OversamplingMode mode) {
@@ -157,16 +161,15 @@ unsigned char AccelerometerMMA8451::getSysmod() {
     return (unsigned char) sysmod.SYSMOD;
 }
 
-float AccelerometerMMA8451::convertToG(unsigned char* buf, unsigned char len) {
-    unsigned char negative = 0;
+float AccelerometerMMA8451::convertToG(unsigned char* buf, bool fastRead) {
+    bool negative = false;
     unsigned char shift = 14;
     float g = 0.0;
-    int mantissaMask = 0x3fff;
-    int integerMask = 0xf000;
-    int aux = 0;
-    int mantissaMax;
+    unsigned int mantissaMask = 0x3fff, integerMask = 0xf000;
+    unsigned int aux = 0;
+    unsigned int mantissaMax;
     aux = buf[0];
-    if (len == 1) {
+    if (fastRead) {
         mantissaMask >>= 8;
         integerMask >>= 8;
         shift -= 8;
@@ -177,14 +180,11 @@ float AccelerometerMMA8451::convertToG(unsigned char* buf, unsigned char len) {
     mantissaMax = mantissaMask >> (unsigned char)xyzDataCfg.FS;
     if (buf[0] & 0x80) {
       aux = ~aux + 1;
-      negative = 1;
+      negative = true;
     }
     g += ((aux & integerMask) >> shift - (unsigned char)xyzDataCfg.FS);
     g +=  (aux & mantissaMax) / (float)(mantissaMax + 1);
-    if (negative) {
-        return -(g);
-    }
-    return g;
+    return (negative) ? -g : g;
 }
 
 void AccelerometerMMA8451::configureRegisterBits(Location location, Mask mask, unsigned char v) {

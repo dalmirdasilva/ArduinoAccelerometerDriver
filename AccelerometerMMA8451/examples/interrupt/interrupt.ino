@@ -39,11 +39,11 @@ void setup() {
   // Configure the INT pins for Active Low
   acc.setInterruptPolarity(AccelerometerMMA8451::ACTIVE_LOW);
   
-  // Enable the Data Ready Interrupt
-  acc.enableInterrupt(AccelerometerMMA8451::INT_DRDY);
-  
   // Route it to INT1.
   acc.routeInterruptToInt1(AccelerometerMMA8451::INT_DRDY);
+  
+  // Enable the Data Ready Interrupt
+  acc.enableInterrupt(AccelerometerMMA8451::INT_DRDY);
   
   // Go back to Active Mode
   acc.activate();
@@ -54,6 +54,7 @@ void setup() {
 void loop() {
   
   if (ready) {
+      
     // Go read the Interrupt Source Register
     intSource.value = acc.readRegister(AccelerometerMMA8451::INT_SOURCE);
     
