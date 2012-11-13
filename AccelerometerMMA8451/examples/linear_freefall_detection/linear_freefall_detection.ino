@@ -1,4 +1,3 @@
-
 #include <Wire.h>
 #include <Accelerometer.h>
 #include <AccelerometerMMA8451.h>
@@ -6,7 +5,7 @@
 /**
  * Motion and Freefall Detection Using the MMA8451
  * 
- * Example Steps for Configuring Motion Detection
+ * 6.2 - Example Steps for Configuring Linear Freefall Detection
  */
 AccelerometerMMA8451 acc(0);
 bool ready = false;
@@ -37,25 +36,26 @@ void setup() {
     // Step 1: Put the device into Standby Mode: Register 0x2A CTRL_REG1
     acc.standby();
 
-    // Step 2: Set Configuration Register for Motion Detection by setting the 
-    // "OR" condition OAE = 1, enabling X, Y, and the latch
-    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_CFG, AccelerometerMMA8451::FF_MT_CFG_OAE, 0x04);
+    // Step 2: Configuration Register set for Freefall Detection enabling "AND" 
+    // condition, OAE = 0, Enabling X, Y, Z and the Latch
+    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_CFG, AccelerometerMMA8451::FF_MT_CFG_OAE, 0x00);
 
-    // Step 3: Threshold Setting Value for the Motion detection of > 3g
-    // Note: The step count is 0.063g/ count
-    // 3g/0.063g = 47.6; //Round up to 48
-    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_THS, AccelerometerMMA8451::FF_MT_THS_THS, 0x30);
+    // Step 3: Threshold Setting Value for the resulting acceleration < 0.2g
+    // Note: The step count is 0.063g/count
+    // 0.2g/0.063g = 3.17 counts 
+    // Round to 3 counts
+    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_THS, AccelerometerMMA8451::FF_MT_THS_THS, 0x03);
 
-    // Step 4: Set the debounce counter to eliminate false readings for 100 Hz 
-    // sample rate with a requirement of 100 ms timer.
-    // Note: 100 ms/10 ms (steps) = 10 counts
-    acc.writeRegister(AccelerometerMMA8451::FF_MT_COUNT, 0x0a);
+    // Step 4: Set the debounce counter to eliminate false positive readings for 
+    // 50Hz sample rate with a requirement of 120 ms timer, assuming Normal Mode.
+    // Note: 120 ms/20 ms (steps) = 6 counts
+    acc.writeRegister(AccelerometerMMA8451::FF_MT_COUNT, 0x06);
 
     // Step 5: Enable Motion/Freefall Interrupt Function in the System
     acc.enableInterrupt(AccelerometerMMA8451::INT_FF_MT);
 
-    // Step 6: Route the Motion/Freefall Interrupt Function to INT1 hardware pin
-    acc.routeInterruptToInt1(AccelerometerMMA8451::INT_FF_MT);
+    // Step 6: Route the Motion/Freefall Interrupt Function to INT2 hardware pin
+    acc.routeInterruptToInt2(AccelerometerMMA8451::INT_FF_MT);
 
     // Step 7: Put the device in Active Mode
     acc.activate();
@@ -67,13 +67,6 @@ void setup() {
 void loop() {
 
     if (ready) {
-
-        // Register 0x0C gives the status of any of the interrupts that are enabled in the entire device.
-        // • An interrupt service routine must be set to handle enabling and then clearing of the interrupts. 
-        //   Register 0x0C will be read to determine which interrupt caused the event.
-        // • When bit 4 is set in Register 0x0C "SRC_LNDPRT" this is the indication that a new orientation has been detected.
-        // • The interrupt source (0x0C) register and the PL_Status (0x10) register are 
-        //   cleared and the new portrait/landscape detection can occur.
 
         //Determine the source of the interrupt by first reading the system interrupt register
         AccelerometerMMA8451::INT_SOURCEbits source;

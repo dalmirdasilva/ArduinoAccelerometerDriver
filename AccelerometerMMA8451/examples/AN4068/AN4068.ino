@@ -3,6 +3,10 @@
 #include <Accelerometer.h>
 #include <AccelerometerMMA8451.h>
 
+/**
+ * Embedded Orientation Detection Using the MMA8451
+ */
+
 AccelerometerMMA8451 acc(0);
 bool ready = false;
 unsigned char buf[6];
@@ -15,13 +19,15 @@ void processXYZ(unsigned char* buf) {
         Serial.println(buf[i], HEX);
     }
     for (int i = 0; i < 6; i += 2) {
-        Serial.print(axis[i/2]);
+        Serial.print(axis[i / 2]);
         Serial.print(": ");
         Serial.println(acc.convertToG(&buf[i], 2));
     }
 }
 
 void isr() {
+
+    // We cannot read i2c inside an interrupt (Wire is interrupt oriented)
     ready = true;
 }
 

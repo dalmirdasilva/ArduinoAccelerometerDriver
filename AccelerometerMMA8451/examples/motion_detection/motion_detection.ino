@@ -1,4 +1,3 @@
-
 #include <Wire.h>
 #include <Accelerometer.h>
 #include <AccelerometerMMA8451.h>
@@ -6,7 +5,7 @@
 /**
  * Motion and Freefall Detection Using the MMA8451
  * 
- * Example Steps for Configuring Motion Detection
+ * 6.1 - Example Steps for Configuring Motion Detection
  */
 AccelerometerMMA8451 acc(0);
 bool ready = false;
@@ -67,13 +66,6 @@ void setup() {
 void loop() {
 
     if (ready) {
-
-        // Register 0x0C gives the status of any of the interrupts that are enabled in the entire device.
-        // • An interrupt service routine must be set to handle enabling and then clearing of the interrupts. 
-        //   Register 0x0C will be read to determine which interrupt caused the event.
-        // • When bit 4 is set in Register 0x0C "SRC_LNDPRT" this is the indication that a new orientation has been detected.
-        // • The interrupt source (0x0C) register and the PL_Status (0x10) register are 
-        //   cleared and the new portrait/landscape detection can occur.
 
         //Determine the source of the interrupt by first reading the system interrupt register
         AccelerometerMMA8451::INT_SOURCEbits source;

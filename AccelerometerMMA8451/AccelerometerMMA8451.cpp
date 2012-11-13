@@ -21,7 +21,7 @@ AccelerometerMMA8451::AccelerometerMMA8451(bool sa0) {
 }
 
 void AccelerometerMMA8451::deviceActivation(DeviceActivation activation) {
-    configureRegisterBits(CTRL_REG1, CTRL_REG1_ACTIVE, (unsigned char)activation);
+    configureRegisterBits(CTRL_REG1, CTRL_REG1_ACTIVE, (unsigned char) activation);
 }
 
 bool AccelerometerMMA8451::isDataReady() {
@@ -61,12 +61,12 @@ void AccelerometerMMA8451::readXYZ(unsigned char* buf) {
 }
 
 void AccelerometerMMA8451::setDynamicRange(DynamicRange range) {
-    configureRegisterBits(XYZ_DATA_CFG, XYZ_DATA_CFG_FS, (unsigned char)range);
-    xyzDataCfg.FS = (unsigned char)range;
+    configureRegisterBits(XYZ_DATA_CFG, XYZ_DATA_CFG_FS, (unsigned char) range);
+    xyzDataCfg.FS = (unsigned char) range;
 }
 
 void AccelerometerMMA8451::setOutputDataRate(OutputDataRate rate) {
-    configureRegisterBits(CTRL_REG1, CTRL_REG1_DR, (unsigned char)rate << 3);
+    configureRegisterBits(CTRL_REG1, CTRL_REG1_DR, (unsigned char) rate << 3);
 }
 
 void AccelerometerMMA8451::setPortraitLandscapeDetection(bool enable) {
@@ -74,15 +74,15 @@ void AccelerometerMMA8451::setPortraitLandscapeDetection(bool enable) {
 }
 
 void AccelerometerMMA8451::setBackFrontTrip(BackFrontTrip trip) {
-    configureRegisterBits(PL_BF_ZCOMP, PL_BF_ZCOMP_BKFR, (unsigned char)trip << 6);
+    configureRegisterBits(PL_BF_ZCOMP, PL_BF_ZCOMP_BKFR, (unsigned char) trip << 6);
 }
 
 void AccelerometerMMA8451::setZLockThresholdAngle(ZLockThresholdAngle angle) {
-    configureRegisterBits(PL_BF_ZCOMP, PL_BF_ZCOMP_ZLOCK, (unsigned char)angle);
+    configureRegisterBits(PL_BF_ZCOMP, PL_BF_ZCOMP_ZLOCK, (unsigned char) angle);
 }
 
 void AccelerometerMMA8451::setPortraitLandscapeThresholdAngle(PortraitLandscapeThresholdAngle angle) {
-    configureRegisterBits(P_L_THS_REG, P_L_THS_REG_P_L_THS, (unsigned char)angle << 3);
+    configureRegisterBits(P_L_THS_REG, P_L_THS_REG_P_L_THS, (unsigned char) angle << 3);
 }
 
 void AccelerometerMMA8451::setHysteresisAngle(HysteresisAngle angle) {
@@ -90,36 +90,36 @@ void AccelerometerMMA8451::setHysteresisAngle(HysteresisAngle angle) {
 }
 
 void AccelerometerMMA8451::enableInterrupt(Interrupt interrupt) {
-    configureRegisterBits(CTRL_REG4, (Mask)interrupt, (unsigned char)interrupt);
+    configureRegisterBits(CTRL_REG4, (Mask) interrupt, (unsigned char) interrupt);
 }
 
 void AccelerometerMMA8451::disableInterrupt(Interrupt interrupt) {
-    configureRegisterBits(CTRL_REG4, (Mask)interrupt, 0);
+    configureRegisterBits(CTRL_REG4, (Mask) interrupt, 0);
 }
 
 void AccelerometerMMA8451::routeInterruptToInt1(Interrupt interrupt) {
-    configureRegisterBits(CTRL_REG5, (Mask)interrupt, (unsigned char)interrupt);
+    configureRegisterBits(CTRL_REG5, (Mask) interrupt, (unsigned char) interrupt);
 }
 
 void AccelerometerMMA8451::routeInterruptToInt2(Interrupt interrupt) {
-    configureRegisterBits(CTRL_REG5, (Mask)interrupt, 0);
+    configureRegisterBits(CTRL_REG5, (Mask) interrupt, 0);
 }
 
 void AccelerometerMMA8451::setInterruptPolarity(InterruptPolarity polarity) {
-    configureRegisterBits(CTRL_REG3, CTRL_REG3_IPOL, (unsigned char)polarity << 1);
+    configureRegisterBits(CTRL_REG3, CTRL_REG3_IPOL, (unsigned char) polarity << 1);
 }
 
 void AccelerometerMMA8451::setAslpOutputDataRate(AslpOutputDataRate rate) {
-    configureRegisterBits(CTRL_REG1, CTRL_REG1_ASLP_RATE, (unsigned char)rate << 6);
+    configureRegisterBits(CTRL_REG1, CTRL_REG1_ASLP_RATE, (unsigned char) rate << 6);
 }
 
 void AccelerometerMMA8451::setReadMode(ReadMode mode) {
-    configureRegisterBits(CTRL_REG1, CTRL_REG1_F_READ, (unsigned char)mode << 1);
-    ctrlReg1.F_READ = (unsigned char)mode;
+    configureRegisterBits(CTRL_REG1, CTRL_REG1_F_READ, (unsigned char) mode << 1);
+    ctrlReg1.F_READ = (unsigned char) mode;
 }
 
 void AccelerometerMMA8451::setOversamplingMode(OversamplingMode mode) {
-    configureRegisterBits(CTRL_REG2, CTRL_REG2_MODS, (unsigned char)mode);
+    configureRegisterBits(CTRL_REG2, CTRL_REG2_MODS, (unsigned char) mode);
 }
 
 void AccelerometerMMA8451::setHighPassFilterCutoffFrequency(HighPassFilterCutoffFrequency frequency) {
@@ -136,7 +136,7 @@ void AccelerometerMMA8451::highPassFilteredData(bool filtered) {
 
 void AccelerometerMMA8451::setFifoBufferOverflowMode(FifoBufferOverflowMode mode) {
     configureRegisterBits(F_SETUP, F_SETUP_F_MODE, (unsigned char) FIFO_DISABLED);
-    configureRegisterBits(F_SETUP, F_SETUP_F_MODE, (unsigned char)mode << 6);
+    configureRegisterBits(F_SETUP, F_SETUP_F_MODE, (unsigned char) mode << 6);
 }
 
 void AccelerometerMMA8451::setFifoWatermark(unsigned char watermark) {
@@ -177,26 +177,26 @@ float AccelerometerMMA8451::convertToG(unsigned char* buf, bool fastRead) {
         aux <<= 8;
         aux |= buf[1];
     }
-    mantissaMax = mantissaMask >> (unsigned char)xyzDataCfg.FS;
+    mantissaMax = mantissaMask >> (unsigned char) xyzDataCfg.FS;
     if (buf[0] & 0x80) {
-      aux = ~aux + 1;
-      negative = true;
+        aux = ~aux + 1;
+        negative = true;
     }
-    g += ((aux & integerMask) >> shift - (unsigned char)xyzDataCfg.FS);
-    g +=  (aux & mantissaMax) / (float)(mantissaMax + 1);
+    g += ((aux & integerMask) >> shift - (unsigned char) xyzDataCfg.FS);
+    g += (aux & mantissaMax) / (float) (mantissaMax + 1);
     return (negative) ? -g : g;
 }
 
 void AccelerometerMMA8451::configureRegisterBits(Location location, Mask mask, unsigned char v) {
     unsigned char n;
     n = readRegister(location);
-    n &= ~((unsigned char)mask);
-    n |= v & ((unsigned char)mask);
+    n &= ~((unsigned char) mask);
+    n |= v & ((unsigned char) mask);
     writeRegister(location, n);
 }
 
 void AccelerometerMMA8451::setPushPullOpenDrain(PushPullOpenDrain ppod) {
-    configureRegisterBits(CTRL_REG3, CTRL_REG3_PP_OD, (unsigned char)ppod << 1);
+    configureRegisterBits(CTRL_REG3, CTRL_REG3_PP_OD, (unsigned char) ppod << 1);
 }
 
 void AccelerometerMMA8451::writeRegister(Location location, unsigned char v) {
