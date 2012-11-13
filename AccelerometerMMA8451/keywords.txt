@@ -14,6 +14,16 @@ DynamicRange    KEYWORD1
 OutputDataRate  KEYWORD1
 OversamplingMode    KEYWORD1
 HighPassFilterCutoffFrequency   KEYWORD1
+Interrupt   KEYWORD1
+InterruptPolarity   KEYWORD1
+InterruptTriggerBits    KEYWORD1
+PushPullOpenDrain   KEYWORD1
+HysteresisAngle KEYWORD1
+PortraitLandscapeThresholdAngle KEYWORD1
+ZLockThresholdAngle KEYWORD1
+BackFrontTrip   KEYWORD1
+ReadMode    KEYWORD1
+FifoBufferOverflowMode  KEYWORD1
 
 ########################################################################
 # Methods and Functions (KEYWORD2)
@@ -28,9 +38,27 @@ standby KEYWORD2
 active  KEYWORD2
 setDynamicRange KEYWORD2
 setOutputDataRate   KEYWORD2
+setPortraitLandscapeDetection   KEYWORD2
+setBackFrontTrip    KEYWORD2
+setZLockThresholdAngle  KEYWORD2
+setPortraitLandscapeThresholdAngle  KEYWORD2
+setHysteresisAngle  KEYWORD2
+enableInterrupt KEYWORD2
+disableInterrupt    KEYWORD2
+routeInterruptToInt1    KEYWORD2
+routeInterruptToInt2    KEYWORD2
+setInterruptPolarity    KEYWORD2
+setAslpOutputDataRate   KEYWORD2
+setReadMode KEYWORD2
 setOversamplingMode KEYWORD2
 setHighPassFilterCutoffFrequency    KEYWORD2
 highPassFilteredData    KEYWORD2
+setFifoBufferOverflowMode   KEYWORD2
+setFifoWatermark    KEYWORD2
+getFifoGateError    KEYWORD2
+getFifoFgt  KEYWORD2
+getSysmod   KEYWORD2
+setPushPullOpenDrain    KEYWORD2
 writeRegister   KEYWORD2
 readRegister    KEYWORD2
 writeRegisterBlock  KEYWORD2

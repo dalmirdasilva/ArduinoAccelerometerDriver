@@ -1,3 +1,4 @@
+#define MMA8451 AccelerometerMMA8451
 
 #include <Wire.h>
 #include <Accelerometer.h>
@@ -8,7 +9,8 @@
  * 
  * Example Steps for Configuring Motion Detection
  */
-AccelerometerMMA8451 acc(0);
+
+MMA8451 acc(0);
 bool ready = false;
 unsigned char buf[6];
 
@@ -39,23 +41,23 @@ void setup() {
 
     // Step 2: Set Configuration Register for Motion Detection by setting the 
     // "OR" condition OAE = 1, enabling X, Y, and the latch
-    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_CFG, AccelerometerMMA8451::FF_MT_CFG_OAE, 0x04);
+    acc.configureRegisterBits(MMA8451::FF_MT_CFG, MMA8451::FF_MT_CFG_OAE, 0x04);
 
     // Step 3: Threshold Setting Value for the Motion detection of > 3g
     // Note: The step count is 0.063g/ count
     // 3g/0.063g = 47.6; //Round up to 48
-    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_THS, AccelerometerMMA8451::FF_MT_THS_THS, 0x30);
+    acc.configureRegisterBits(MMA8451::FF_MT_THS, MMA8451::FF_MT_THS_THS, 0x30);
 
     // Step 4: Set the debounce counter to eliminate false readings for 100 Hz 
     // sample rate with a requirement of 100 ms timer.
     // Note: 100 ms/10 ms (steps) = 10 counts
-    acc.writeRegister(AccelerometerMMA8451::FF_MT_COUNT, 0x0a);
+    acc.writeRegister(MMA8451::FF_MT_COUNT, 0x0a);
 
     // Step 5: Enable Motion/Freefall Interrupt Function in the System
-    acc.enableInterrupt(AccelerometerMMA8451::INT_FF_MT);
+    acc.enableInterrupt(MMA8451::INT_FF_MT);
 
     // Step 6: Route the Motion/Freefall Interrupt Function to INT1 hardware pin
-    acc.routeInterruptToInt1(AccelerometerMMA8451::INT_FF_MT);
+    acc.routeInterruptToInt1(MMA8451::INT_FF_MT);
 
     // Step 7: Put the device in Active Mode
     acc.activate();
@@ -76,9 +78,9 @@ void loop() {
         //   cleared and the new portrait/landscape detection can occur.
 
         //Determine the source of the interrupt by first reading the system interrupt register
-        AccelerometerMMA8451::INT_SOURCEbits source;
+        MMA8451::INT_SOURCEbits source;
 
-        source.value = acc.readRegister(AccelerometerMMA8451::INT_SOURCE);
+        source.value = acc.readRegister(MMA8451::INT_SOURCE);
 
         // Set up Case statement here to service all of the possible interrupts
         if (source.SRC_FF_MT) {
@@ -87,7 +89,7 @@ void loop() {
             //Update Image on Display Screen based on the data stored
 
             //Read the PL State from the Status Register, clear the interrupt, PL Status Register
-            acc.readRegister(AccelerometerMMA8451::PL_STATUS);
+            acc.readRegister(MMA8451::PL_STATUS);
 
             // Read 14/12/10-bit XYZ results using a 6 byte IIC access.
             acc.readXYZ(buf);
