@@ -8,64 +8,72 @@ AccelerometerMMA8451::INT_SOURCEbits intSource;
 unsigned char buf[6];
 
 void processXYZ(unsigned char* buf) {
-  for (int i = 0; i < 6; i++) {
-    Serial.print(i, DEC);
-    Serial.print(": 0x");
-    Serial.println(buf[i], HEX);
-  }
-  for (int i = 0; i < 6; i += 2) {
-    Serial.print("> ");
-    Serial.println(acc.convertToG(&buf[i], 2));
-  }
+    for (int i = 0; i < 6; i++) {
+        Serial.print(i, DEC);
+        Serial.print(": 0x");
+        Serial.println(buf[i], HEX);
+    }
+    for (int i = 0; i < 6; i += 2) {
+        Serial.print("> ");
+        Serial.println(acc.convertToG(&buf[i], 2));
+    }
 }
 
 void isr() {
-  ready = true;
+    ready = true;
 }
 
 void setup() {
 
-  Serial.begin(9600);
-  
-  // Go to the Standby Mode
-  acc.standby();
-  
-  // Clear the F_Read bit to ensure both MSB's and LSB's are indexed
-  acc.setReadMode(AccelerometerMMA8451::NORMAL_READ);
+    Serial.begin(9600);
 
-  // Configure the INT pins for Open Drain
-  acc.setPushPullOpenDrain(AccelerometerMMA8451::OPEN_DRAIN);
-  
-  // Configure the INT pins for Active Low
-  acc.setInterruptPolarity(AccelerometerMMA8451::ACTIVE_LOW);
-  
-  // Route it to INT1.
-  acc.routeInterruptToInt1(AccelerometerMMA8451::INT_DRDY);
-  
-  // Enable the Data Ready Interrupt
-  acc.enableInterrupt(AccelerometerMMA8451::INT_DRDY);
-  
-  // Go back to Active Mode
-  acc.activate();
-  
-  attachInterrupt(0, isr, FALLING);
+    // Go to the Standby Mode
+    acc.standby();
+
+    // Clear the F_Read bit to ensure both MSB's and LSB's are indexed
+    acc.setReadMode(AccelerometerMMA8451::NORMAL_READ);
+
+    // Configure the INT pins for Open Drain
+    acc.setPushPullOpenDrain(AccelerometerMMA8451::OPEN_DRAIN);
+
+    // Configure the INT pins for Active Low
+    acc.setInterruptPolarity(AccelerometerMMA8451::ACTIVE_LOW);
+
+    // Route it to INT1.
+    acc.routeInterruptToInt1(AccelerometerMMA8451::INT_DRDY);
+
+    // Enable the Data Ready Interrupt
+    acc.enableInterrupt(AccelerometerMMA8451::INT_DRDY);
+
+    // Go back to Active Mode
+    acc.activate();
+
+    attachInterrupt(0, isr, FALLING);
 }
 
 void loop() {
-  
-  if (ready) {
-      
-    // Go read the Interrupt Source Register
-    intSource.value = acc.readRegister(AccelerometerMMA8451::INT_SOURCE);
+
+    if (ready) {
+        
+        Serial.println("ready");
+        
+        ready = false;
+
+        // Go read the Interrupt Source Register
+        intSource.value = acc.readRegister(AccelerometerMMA8451::INT_SOURCE);
     
-    if (intSource.SRC_DRDY == 1) {
-    
-      // Read 14/12/10-bit XYZ results using a 6 byte IIC access.
-      acc.readXYZ(buf);
-      
-      processXYZ(buf);
+        Serial.print("source: ");
+        Serial.println(source.value, HEX);
+
+        if (intSource.SRC_DRDY == 1) {
+            
+            acc.readRegister(AccelerometerMMA8451::PL_STATUS);
+
+            // Read 14/12/10-bit XYZ results using a 6 byte IIC access.
+            acc.readXYZ(buf);
+
+            processXYZ(buf);
+        }
     }
-    ready = false;
-  }
 }
 

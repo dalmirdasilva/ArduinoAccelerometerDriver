@@ -35,6 +35,8 @@ void setup() {
 
     Serial.begin(9600);
 
+    Serial.println("Setup...");
+
     // Step 1: Put the part into Standby Mode
     acc.standby();
 
@@ -73,11 +75,15 @@ void setup() {
 
     // Step 12: Write a Service Routine to Service the Interrupt
     attachInterrupt(0, isr, FALLING);
+
+    Serial.println("done.");
 }
 
 void loop() {
 
     if (ready) {
+
+        ready = false;
 
         // Register 0x0C gives the status of any of the interrupts that are enabled in the entire device.
         // • An interrupt service routine must be set to handle enabling and then clearing of the interrupts. 
@@ -86,18 +92,21 @@ void loop() {
         // • The interrupt source (0x0C) register and the PL_Status (0x10) register are 
         //   cleared and the new portrait/landscape detection can occur.
 
-        //Determine the source of the interrupt by first reading the system interrupt register
+        // Determine the source of the interrupt by first reading the system interrupt register
         AccelerometerMMA8451::INT_SOURCEbits source;
 
         source.value = acc.readRegister(AccelerometerMMA8451::INT_SOURCE);
+    
+        Serial.print("source: ");
+        Serial.println(source.value, HEX);
 
         // Set up Case statement here to service all of the possible interrupts
         if (source.SRC_LNDPRT) {
 
-            //Perform an Action since Orientation Flag has been set
-            //Update Image on Display Screen based on the data stored
+            // Perform an Action since Orientation Flag has been set
+            // Update Image on Display Screen based on the data stored
 
-            //Read the PL State from the Status Register, clear the interrupt, PL Status Register
+            // Read the PL State from the Status Register, clear the interrupt, PL Status Register
             acc.readRegister(AccelerometerMMA8451::PL_STATUS);
 
             // Read 14/12/10-bit XYZ results using a 6 byte IIC access.
@@ -105,8 +114,6 @@ void loop() {
 
             // Puts the values.
             processXYZ(buf);
-
-            ready = false;
         }
     }
 }
