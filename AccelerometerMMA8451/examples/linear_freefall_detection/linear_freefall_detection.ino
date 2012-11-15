@@ -38,11 +38,17 @@ void setup() {
 
     // Step 1: Put the device into Standby Mode: Register 0x2A CTRL_REG1
     acc.standby();
+    acc.setDynamicRange(AccelerometerMMA8451::DR_4G);
 
     // Step 2: Configuration Register set for Freefall Detection enabling "AND" 
     // condition, OAE = 0, Enabling X, Y, Z and the Latch
     acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_CFG, AccelerometerMMA8451::FF_MT_CFG_OAE, 0x00);
-
+    
+    // Event flag enable on X, Y and Z event.
+    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_CFG, AccelerometerMMA8451::FF_MT_CFG_ZEFE, 0x20);
+    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_CFG, AccelerometerMMA8451::FF_MT_CFG_YEFE, 0x10);
+    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_CFG, AccelerometerMMA8451::FF_MT_CFG_XEFE, 0x08);
+    
     // Step 3: Threshold Setting Value for the resulting acceleration < 0.2g
     // Note: The step count is 0.063g/count
     // 0.2g/0.063g = 3.17 counts 

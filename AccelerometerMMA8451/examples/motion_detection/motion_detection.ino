@@ -1,10 +1,9 @@
-
 #include <Wire.h>
 #include <Accelerometer.h>
 #include <AccelerometerMMA8451.h>
 
 /**
- * Motion and Freefall Detection Using the AccelerometerMMA8451
+ * Motion Detection Using the AccelerometerMMA8451
  * 
  * Example Steps for Configuring Motion Detection
  */
@@ -41,12 +40,18 @@ void setup() {
 
     // Step 2: Set Configuration Register for Motion Detection by setting the 
     // "OR" condition OAE = 1, enabling X, Y, and the latch
-    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_CFG, AccelerometerMMA8451::FF_MT_CFG_OAE, 0x04);
+    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_CFG, AccelerometerMMA8451::FF_MT_CFG_OAE, 0x40);
+    
+    // Event flag enable on X, Y and Z event.
+    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_CFG, AccelerometerMMA8451::FF_MT_CFG_ZEFE, 0x20);
+    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_CFG, AccelerometerMMA8451::FF_MT_CFG_YEFE, 0x10);
+    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_CFG, AccelerometerMMA8451::FF_MT_CFG_XEFE, 0x08);
 
     // Step 3: Threshold Setting Value for the Motion detection of > 3g
     // Note: The step count is 0.063g/ count
-    // 3g/0.063g = 47.6; //Round up to 48
-    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_THS, AccelerometerMMA8451::FF_MT_THS_THS, 0x30);
+    // 3g/0.063g = 47.6; 
+    // Round up to 48
+    acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_THS, AccelerometerMMA8451::FF_MT_THS_THS, 0x10);
 
     // Step 4: Set the debounce counter to eliminate false readings for 100 Hz 
     // sample rate with a requirement of 100 ms timer.
@@ -95,9 +100,6 @@ void loop() {
 
         // Set up Case statement here to service all of the possible interrupts
         if (source.SRC_FF_MT) {
-
-            //Perform an Action since Orientation Flag has been set
-            //Update Image on Display Screen based on the data stored
 
             //Read the PL State from the Status Register, clear the interrupt, PL Status Register
             acc.readRegister(AccelerometerMMA8451::PL_STATUS);
