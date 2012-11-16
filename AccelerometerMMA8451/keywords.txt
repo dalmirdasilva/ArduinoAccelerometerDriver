@@ -9,6 +9,7 @@
 AccelerometerMMA8451    KEYWORD1
 Register    KEYWORD1
 Mask    KEYWORD1
+Location    KEYWORD1
 DeviceActivation    KEYWORD1
 DynamicRange    KEYWORD1
 OutputDataRate  KEYWORD1

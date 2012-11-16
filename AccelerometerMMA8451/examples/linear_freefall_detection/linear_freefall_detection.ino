@@ -38,6 +38,7 @@ void setup() {
 
     // Step 1: Put the device into Standby Mode: Register 0x2A CTRL_REG1
     acc.standby();
+    
     acc.setDynamicRange(AccelerometerMMA8451::DR_4G);
 
     // Step 2: Configuration Register set for Freefall Detection enabling "AND" 

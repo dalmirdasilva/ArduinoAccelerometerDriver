@@ -181,6 +181,7 @@ public:
      * Some useful masks.
      */
     enum Mask {
+        
         STATUS_DRDY = 0x01,
         STATUS_DOVR = 0x02,
         STATUS_PERR = 0x04,
@@ -341,6 +342,34 @@ public:
      * @param mode          A possible device mode.
      */
     void setDeviceMode(DeviceMode mode);
+    
+    /**
+     * The offset can be calibrated by storing the offset values in
+     * the designated offset drift registers $10 to $15 in the
+     * accelerometer. These values will be stored here until the part
+     * loses power. It is a very simple to store these values written to
+     * the registers in the memory of a microcontroller, if used in
+     * conjunction with the sensor. This will provide automatic
+     * calibration of the sensor each time the sensor is turned back on.
+     * 
+     * In order to calibrate the MMA745xL 0g offset, the
+     * predetermined digital offset values should be subtracted from
+     * the reading of the actual digital sensing values. The following
+     * procedure is a recommendation for how this can be
+     * accomplished:
+     * 
+     * 1. After power up, set up the "Mode Control Register"
+     * (Register $16) to be in "measurement mode" by writing
+     * $05 into Register $16. Then read the X, Y and Z offset
+     * values from the Registers $00-$08. The first 6 registers
+     * of the 9 are 10-bit XYZ output values: LSB, first; MSB,
+     * second. Please verify with the data sheet for detailed
+     * register information.
+     * 
+     * 2. In this step, the offset compensation is calculated to
+     * shift the offset to zero.
+     */
+    void calibrate0gOffset(unsigned char samples);
 
     /**
      * Put sensor into Standby Mode
@@ -348,11 +377,6 @@ public:
     void standby() {
         setDeviceMode(STANDBY_MODE);
     }
-    
-    /**
-     * Uses 8 bit measurement
-     */
-    void setUse8bit(bool use);
 
     /**
      * Put sensor into Measurement Mode
@@ -412,6 +436,11 @@ public:
     void pulseDetectionMode() {
         setDeviceMode(PULSE_DETECTION_MODE);
     }
+    
+    /**
+     * Uses 8 bit measurement
+     */
+    void setUse8bit(bool use);
 
     /**
      * Sets the detection condition.
@@ -500,6 +529,15 @@ public:
      * @param len               The number of bytes to write.
      */
     void writeRegisterBlock(unsigned char to, unsigned char* buf, unsigned char len);
+
+    /**
+     * Fills a block of data into the device starting at the 'to' register.
+     * 
+     * @param to                The address to write.
+     * @param b                 The byte data to be filled into register.
+     * @param len               The number of bytes to write.
+     */
+    void fillRegisterBlock(unsigned char to, unsigned char b, unsigned char len);
 
     /**
      * Reads a block of data from the device starting at the 'from' register.
