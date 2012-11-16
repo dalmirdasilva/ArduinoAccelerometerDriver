@@ -37,8 +37,8 @@ void AccelerometerMMA7455::setDeviceMode(DeviceMode mode) {
 }
 
 void AccelerometerMMA7455::calibrate0gOffset(unsigned char samples) {
-
-    char counts[] = {16, 64, 32};
+    
+    bool was8bit = use8bit;
     char xyz[3], i = 0;
     unsigned char buf[6];
     int avg[3] = {0}, adjust[3] = {0};
@@ -71,6 +71,8 @@ void AccelerometerMMA7455::calibrate0gOffset(unsigned char samples) {
     buf[5] = (adjust[2] >> 8) & 0xff;
     
     writeRegisterBlock(XOFFL, buf, 6);
+    
+    setUse8bit(was8bit);
 }
 
 bool AccelerometerMMA7455::isDataReady() {
