@@ -20,6 +20,13 @@ AccelerometerMMA7455::AccelerometerMMA7455() {
     Wire.begin();
 }
 
+void AccelerometerMMA7455::setUse8bit(bool use) {
+    use8bit = use;
+    if (!use8bit) {
+        setDynamicRange(DR_8G);
+    }
+}
+
 void AccelerometerMMA7455::setDeviceMode(DeviceMode mode) {
     configureRegisterBits(MCTL, MCTL_MODE, (unsigned char) mode);
     mctl.MODE = mode;
@@ -68,6 +75,9 @@ void AccelerometerMMA7455::setDetectionCondition(DetectionCondition condition) {
 void AccelerometerMMA7455::setDynamicRange(DynamicRange range) {
     configureRegisterBits(MCTL, MCTL_GLVL, (unsigned char) range << 2);
     mctl.GLVL = range;
+    if (mctl.GLVL != DR_8G) {
+        use8bit = true;
+    }
 }
 
 void AccelerometerMMA7455::enableInterrupt(Axis axis) {
@@ -93,40 +103,6 @@ void AccelerometerMMA7455::disableInterrupt(Axis axis) {
 void AccelerometerMMA7455::setInterruptConfiguration(InterruptConfiguration configuration) {
     configureRegisterBits(CTL1, CTL1_INTREG, (unsigned char) configuration << 2);
 }
-
-/*
- 
- 
-float AccelerometerMMA7455::convertToG(unsigned char* buf, bool is8bit) {
-    bool negative = false;
-    unsigned char shift = 14;
-    float g = 0.0;
-    unsigned int mantissaMask = 0x3fff, integerMask = 0xf000;
-    unsigned int aux = 0;
-    unsigned int mantissaMax;
-    // Lookup table to convert DinamicRange into shift count
-    unsigned char fullScale[] = {2, 0, 1};
-    if (is8bit) {
-        aux = buf[0];
-        mantissaMask >>= 8;
-        integerMask >>= 8;
-        shift -= 8;
-    } else {
-        aux = (buf[1] << 6) & 0xc0;
-        aux <<= 2;
-        aux |= buf[0];
-        aux <<= 6;
-    }
-    mantissaMax = mantissaMask >> fullScale[mctl.GLVL & 0x03];
-    if ((is8bit && buf[0] & 0x80) || (!is8bit && buf[1] & 0x02)) {
-        aux = ~aux + 1;
-        negative = true;
-    }
-    g += ((aux & integerMask) >> shift - fullScale[mctl.GLVL & 0x03]);
-    g += (aux & mantissaMax) / (float) (mantissaMax + 1);
-    return (negative) ? -g : g;
-}
- */
 
 float AccelerometerMMA7455::convertToG(unsigned char* buf, bool is8bit) {
     float counts8bit[] = {16.0, 64.0, 32.0};

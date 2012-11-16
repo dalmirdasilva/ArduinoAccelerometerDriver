@@ -352,9 +352,7 @@ public:
     /**
      * Uses 8 bit measurement
      */
-    void setUse8bit(bool use) {
-        use8bit = use;
-    }
+    void setUse8bit(bool use);
 
     /**
      * Put sensor into Measurement Mode
