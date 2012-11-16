@@ -1323,6 +1323,8 @@ public:
      * Converts an array of chars into a float type.
      * 
      * @param buf               1 (8-bit) our 2 (14-bit) bytes to be converted.  
+     * @param fastRead          boolean indication if the buffer has a fast read
+     *                          value.
      */
     float convertToG(unsigned char* buf, bool fastRead);
 
