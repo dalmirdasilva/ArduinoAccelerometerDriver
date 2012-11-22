@@ -1142,9 +1142,20 @@ public:
     /**
      * Enables some interrupt.
      * 
+     * NOTE: The interrupt will be routed to the default pin.
+     * 
      * @param interrupt         The interrupt flag.
      */
     void enableInterrupt(Interrupt interrupt);
+
+    /**
+     * Enables some interrupt, and route to the given pin.
+     * 
+     * @param interrupt         The interrupt flag.
+     * @param routePin          The pin where the interrupt will be routed.
+     *                          should be 1 or 2
+     */
+    void enableInterrupt(Interrupt interrupt, unsigned char routePin);
 
     /**
      * Disable some interrupt.
@@ -1156,6 +1167,7 @@ public:
     /**
      * Interrupt is routed to INT1 pin;
      * 
+     * @deprecated
      * @param interrupt         The interrupt flag.
      */
     void routeInterruptToInt1(Interrupt interrupt);
@@ -1163,9 +1175,19 @@ public:
     /**
      * Interrupt is routed to INT2 pin;
      * 
+     * @deprecated
      * @param interrupt         The interrupt flag.
      */
     void routeInterruptToInt2(Interrupt interrupt);
+
+    /**
+     * Interrupt is routed to the given pin;
+     * 
+     * @param interrupt         The interrupt flag.
+     * @param routePin          The pin where the interrupt will be routed.
+     *                          should be 1 or 2
+     */
+    void routeInterrupt(Interrupt interrupt, unsigned char routePin);
 
     /**
      * Sets the interrupt polarity

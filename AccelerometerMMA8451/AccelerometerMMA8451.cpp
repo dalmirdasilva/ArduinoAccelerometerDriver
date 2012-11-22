@@ -93,6 +93,11 @@ void AccelerometerMMA8451::enableInterrupt(Interrupt interrupt) {
     configureRegisterBits(CTRL_REG4, (Mask) interrupt, (unsigned char) interrupt);
 }
 
+void AccelerometerMMA8451::enableInterrupt(Interrupt interrupt, unsigned char routePin) {
+    configureRegisterBits(CTRL_REG4, (Mask) interrupt, (unsigned char) interrupt);
+    routeInterrupt(interrupt, routePin);
+}
+
 void AccelerometerMMA8451::disableInterrupt(Interrupt interrupt) {
     configureRegisterBits(CTRL_REG4, (Mask) interrupt, 0);
 }
@@ -103,6 +108,10 @@ void AccelerometerMMA8451::routeInterruptToInt1(Interrupt interrupt) {
 
 void AccelerometerMMA8451::routeInterruptToInt2(Interrupt interrupt) {
     configureRegisterBits(CTRL_REG5, (Mask) interrupt, 0);
+}
+
+void AccelerometerMMA8451::routeInterrupt(Interrupt interrupt, unsigned char routePin) {
+    configureRegisterBits(CTRL_REG5, (Mask) interrupt, (routePin == 1) ? interrupt : 0);
 }
 
 void AccelerometerMMA8451::setInterruptPolarity(InterruptPolarity polarity) {
