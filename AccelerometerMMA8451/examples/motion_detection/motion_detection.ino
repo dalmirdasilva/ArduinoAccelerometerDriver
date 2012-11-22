@@ -5,11 +5,22 @@
 /**
  * Motion Detection Using the AccelerometerMMA8451
  * 
+ Origionally Written by Dalmir da Silva <dalmirdasilva@gmail.com>
+ Modified 
+ 21NOV2012 Chuck Todd 
+    o Explicitly set only FF_MT interrupt
+    o add code to clear all pending interrupts
+     
+ 
+ Connect SCL to AD5/SCL  must have a Voltage convert between Arduino Uno and MMA8451 for each data line.
+ Connect SDA to AD4/SDA
+ Connect INT1 to D2
+  
  * Example Steps for Configuring Motion Detection
  */
 
-AccelerometerMMA8451 acc(0);
-bool ready = false;
+AccelerometerMMA8451 acc(0); // SA0 of MMA8451 is LOW so Address is 0x1C
+volatile bool ready = false;
 unsigned char buf[6];
 
 void processXYZ(unsigned char* buf) {
@@ -65,51 +76,152 @@ void setup() {
     acc.setInterruptPolarity(AccelerometerMMA8451::ACTIVE_LOW);
 
     // Step 5: Enable Motion/Freefall Interrupt Function in the System
+    acc.writeRegister(AccelerometerMMA8451::CTRL_REG4,0x00);// disable all interrupt sources we only want Freefall or Motion interrupt
     acc.enableInterrupt(AccelerometerMMA8451::INT_FF_MT);
 
     // Step 6: Route the Motion/Freefall Interrupt Function to INT1 hardware pin
     acc.routeInterruptToInt1(AccelerometerMMA8451::INT_FF_MT);
     
-    // Step 10: Set the debounce counter in register 0x12
-    acc.writeRegister(AccelerometerMMA8451::PL_COUNT, 0x05);
-
+    
     // Step 7: Put the device in Active Mode
     acc.activate();
-
+    
+    // display attached device id
+    byte b;
+    b = acc.readRegister(AccelerometerMMA8451::WHO_AM_I);
+    switch (b){
+       case(0x2A): {
+         Serial.println("MMA8452 present");
+         break;}
+       case(0x1A):{
+         Serial.println("MMA8451 present");
+         break;}
+       default: {
+         Serial.print("unknown device present 0x");
+         Serial.println(b,HEX);}
+       }
+       
     // Step 8: Write a Service Routine to Service the Interrupt
     attachInterrupt(0, isr, FALLING);
 
     Serial.println("done.");
 }
+unsigned long tm = millis(); // timeout counter 
 
 void loop() {
 
+    AccelerometerMMA8451::INT_SOURCEbits source;
+
+    if ((unsigned long)(millis()-tm)>10000){ // 10 seconds since last interrupt is something wrong? read most of the MMA8451's status regs
+      // this section is for debuging purposes.  if there is not activity for 10 seconds something may be wrong, so display
+      // the MMA8451's interrupt status / config registers to verify everything is correctly configured.
+      
+	   source.value = acc.readRegister(AccelerometerMMA8451::INT_SOURCE);
+	  
+  	   AccelerometerMMA8451::STATUSbits status;
+	   status.value = acc.readRegister(AccelerometerMMA8451::STATUS);
+	   
+	   AccelerometerMMA8451::CTRL_REG3bits ctrl_reg3;
+	   ctrl_reg3.value = acc.readRegister(AccelerometerMMA8451::CTRL_REG3);
+	   
+	   AccelerometerMMA8451::CTRL_REG4bits ctrl_reg4;
+	   ctrl_reg4.value = acc.readRegister(AccelerometerMMA8451::CTRL_REG4);
+	   
+	   AccelerometerMMA8451::CTRL_REG5bits ctrl_reg5;
+	   ctrl_reg5.value = acc.readRegister(AccelerometerMMA8451::CTRL_REG5);
+	   
+	   char buf[80];
+	   sprintf(buf,"INT_SOURCE: %2u, Data Status: %2u, Int_cfg: %2u, INT_ENABLE: %2u, INT_OUT: %2u",source.value,status.value,ctrl_reg3.value,
+	     ctrl_reg4.value,ctrl_reg5.value);
+	   
+	   Serial.print("Time out ");
+	   Serial.println(buf);
+	   
+	   if (source.value) {ready = true;} //hardware interrupt never triggered, possible hardware fault
+	     //acknowledge interrupts by reading status value for each interrupt
+		 //this will allow the MMA8451 to set a new interrupt.
+
+		 tm=(unsigned long)millis(); // restart timeout counter
+	}
+	
     if (ready) {
         
-        Serial.println("ready");
+       // Serial.println("ready");
 
         ready = false;
 
         //Determine the source of the interrupt by first reading the system interrupt register
-        AccelerometerMMA8451::INT_SOURCEbits source;
 
         source.value = acc.readRegister(AccelerometerMMA8451::INT_SOURCE);
     
         Serial.print("source: ");
-        Serial.println(source.value, HEX);
-
+        Serial.print(source.value, HEX);
+        Serial.print(" ");
         // Set up Case statement here to service all of the possible interrupts
-        if (source.SRC_FF_MT) {
-
-            //Read the PL State from the Status Register, clear the interrupt, PL Status Register
-            acc.readRegister(AccelerometerMMA8451::PL_STATUS);
-
-            // Read 14/12/10-bit XYZ results using a 6 byte IIC access.
+		if (source.SRC_DRDY) { // Data Ready / Data Overflow Interrupt (bit 0 of source)
+		
+			// Read 14/12/10-bit XYZ results using a 6 byte IIC access this clear the DRDY interrupt.
             acc.readXYZ(buf);
 
             // Puts the values.
             processXYZ(buf);
-        }
+		}
+        if (source.SRC_FF_MT) { // Freefall or Motion Detection Interrupt (bit 2 of source)
+
+            //Read the FF_MT State from the Status Register, clear the interrupt, by reading the FF_MT_SRC Register
+            AccelerometerMMA8451::FF_MT_SRCbits ff_mt_src;
+			ff_mt_src.value = acc.readRegister(AccelerometerMMA8451::FF_MT_SRC);
+		
+			Serial.print("FreeFall Motion Interrupt: ");
+			Serial.println(ff_mt_src.value,BIN);
+            }
+		if (source.SRC_PULSE) { // single or Double Tap Pulse Detected (bit 3 of source)
+		   // Read the PULSE_SRC register to clear Interrupt;
+		   AccelerometerMMA8451::PULSE_SRCbits pulse_src;
+		   pulse_src.value = acc.readRegister(AccelerometerMMA8451::PULSE_SRC);
+		   
+		   Serial.print("Tap Interrupt ");
+		   Serial.println(pulse_src.value,BIN);
+		   }
+		if (source.SRC_LNDPRT) { // Portrait or landscape orientation Change detected (bit 4 of source)
+			// Read the PL_STATUS register to clear Interrupt'
+			
+			AccelerometerMMA8451::PL_STATUSbits pl_status;
+			pl_status.value = acc.readRegister(AccelerometerMMA8451::PL_STATUS);
+			
+			Serial.print("Orientation Change ");
+			Serial.println(pl_status.value, BIN);
+		   }
+		if (source.SRC_TRANS) { // Transient interrupt (bit 5 of status)
+		   // Read TRANS_SRC register to clear interrupt
+		   
+		   AccelerometerMMA8451::TRANSIENT_SRCbits trans_src;
+		   trans_src.value = acc.readRegister(AccelerometerMMA8451::TRANSIENT_SRC);
+		   
+		   Serial.print("Transient Detected ");
+		   Serial.println(trans_src.value,BIN);
+		   }
+		if (source.SRC_FIFO) { // FIFO Overflow or Watermark hit (bit 6 of status)
+		   // Read F_STATUS register to Clear Interrupt
+		   
+		   AccelerometerMMA8451::F_STATUSbits f_status;
+		   f_status.value = acc.readRegister(AccelerometerMMA8451::F_STATUS);
+		   
+		   Serial.print("FIFO overflow/watermark ");
+		   Serial.println(f_status.value,BIN);
+		   }
+		 if (source.SRC_ASLP) { // sleep to wake or wake to sleep because of inactivity timeout (bit 7 of status)
+		    // Read SYSMOD register to Clear Interrupt
+			
+			AccelerometerMMA8451::SYSMODbits sysmod;
+			sysmod.value = acc.readRegister(AccelerometerMMA8451::SYSMOD);
+			
+			Serial.print("sleep/wake transistion ");
+			Serial.println(sysmod.value,BIN);
+			}
+			
+		tm = (unsigned long)millis();  // init timeout counter
+        
     }
 }
 
