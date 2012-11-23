@@ -171,29 +171,18 @@ unsigned char AccelerometerMMA8451::getSysmod() {
 }
 
 float AccelerometerMMA8451::convertToG(unsigned char* buf, bool fastRead) {
-    bool negative = false;
-    unsigned char shift = 14;
-    float g = 0.0;
-    unsigned int mantissaMask = 0x3fff, integerMask = 0xf000;
-    unsigned int aux = 0;
-    unsigned int mantissaMax;
-    aux = buf[0];
+
     if (fastRead) {
-        mantissaMask >>= 8;
-        integerMask >>= 8;
-        shift -= 8;
+        float counts[] = {64.0, 32.0, 16.0};
+        return ((char) buf[0]) / counts[xyzDataCfg.FS];
     } else {
+        int aux = 0;
+        float counts[] = {16384.0, 8192.0, 4096.0};
+        aux = buf[0];
         aux <<= 8;
         aux |= buf[1];
+        return aux / counts[xyzDataCfg.FS];
     }
-    mantissaMax = mantissaMask >> (unsigned char) xyzDataCfg.FS;
-    if (buf[0] & 0x80) {
-        aux = ~aux + 1;
-        negative = true;
-    }
-    g += ((aux & integerMask) >> shift - (unsigned char) xyzDataCfg.FS);
-    g += (aux & mantissaMax) / (float) (mantissaMax + 1);
-    return (negative) ? -g : g;
 }
 
 void AccelerometerMMA8451::configureRegisterBits(Location location, Mask mask, unsigned char v) {

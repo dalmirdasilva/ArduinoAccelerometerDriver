@@ -37,7 +37,7 @@ void AccelerometerMMA7455::setDeviceMode(DeviceMode mode) {
 }
 
 void AccelerometerMMA7455::calibrate0gOffset(unsigned char samples) {
-    
+
     bool was8bit = use8bit;
     char xyz[3], i = 0;
     unsigned char buf[6];
@@ -49,29 +49,29 @@ void AccelerometerMMA7455::calibrate0gOffset(unsigned char samples) {
     fillRegisterBlock(AccelerometerMMA7455::XOFFL, 0, 6);
     delay(100);
 
-    for (; i < samples; i++) {
+    for (i = 0; i < samples; i++) {
         readXYZ((unsigned char *) xyz);
         avg[0] += xyz[0];
         avg[1] += xyz[1];
         avg[2] += xyz[2];
         delay(1);
     }
-    
+
     adjust[0] = -(avg[0] / samples) * 2;
     adjust[1] = -(avg[1] / samples) * 2;
     adjust[2] = -(avg[2] / samples) * 2;
-    
+
     buf[0] = adjust[0] & 0xff;
     buf[1] = (adjust[0] >> 8) & 0xff;
-    
+
     buf[2] = adjust[1] & 0xff;
     buf[3] = (adjust[1] >> 8) & 0xff;
-    
+
     buf[4] = adjust[2] & 0xff;
     buf[5] = (adjust[2] >> 8) & 0xff;
-    
+
     writeRegisterBlock(XOFFL, buf, 6);
-    
+
     setUse8bit(was8bit);
 }
 
@@ -150,9 +150,10 @@ void AccelerometerMMA7455::setInterruptConfiguration(InterruptConfiguration conf
 }
 
 float AccelerometerMMA7455::convertToG(unsigned char* buf, bool is8bit) {
-    float counts8bit[] = {16.0, 64.0, 32.0};
+    
     if (is8bit) {
-        return (float) ((char) buf[0]) / counts8bit[mctl.GLVL];
+        float counts[] = {16.0, 64.0, 32.0};
+        return (float) ((char) buf[0]) / counts[mctl.GLVL];
     } else {
         int aux = 0;
         if (buf[1] & 0x02) {
