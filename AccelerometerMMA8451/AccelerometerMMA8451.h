@@ -939,7 +939,8 @@ public:
         INT_LNDPRT = 0x10,
         INT_TRANS = 0x20,
         INT_FIFO = 0x40,
-        INT_ASLP = 0x80
+        INT_ASLP = 0x80,
+        INT_ALL = 0xff
     };
 
     /**

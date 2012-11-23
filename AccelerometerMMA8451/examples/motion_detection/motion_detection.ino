@@ -81,10 +81,10 @@ void setup() {
 }
 
 void loop() {
-    
+
     AccelerometerMMA8451::INT_SOURCEbits source;
     AccelerometerMMA8451::STATUSbits status;
-    
+
     if ((millis() - tm) > 10000) { // timeout
         source.value = acc.readRegister(AccelerometerMMA8451::INT_SOURCE);
         status.value = acc.readRegister(AccelerometerMMA8451::STATUS);
