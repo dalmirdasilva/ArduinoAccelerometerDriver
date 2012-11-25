@@ -1,0 +1,28 @@
+########################################################################
+# Syntax Coloring Map For AccelerometerNunchuk
+########################################################################
+
+########################################################################
+# Datatypes (KEYWORD1)
+########################################################################
+
+AccelerometerNunchuk    KEYWORD1
+Axis    KEYWORD1
+
+########################################################################
+# Methods and Functions (KEYWORD2)
+########################################################################
+
+readXg	KEYWORD2
+readYg	KEYWORD2
+readZg	KEYWORD2
+decode  KEYWORD2
+readAcceleration    KEYWORD2
+begin   KEYWORD2
+readFrame   KEYWORD2
+convertToG  KEYWORD2
+readYJoystick   KEYWORD2
+readXJoystick   KEYWORD2
+readZJoystick   KEYWORD2
+readCButton KEYWORD2
+readZButton KEYWORD2

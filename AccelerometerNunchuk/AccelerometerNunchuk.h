@@ -1,154 +1,207 @@
-/* 
- * File:   AccelerometerNunchuck.h
- * Author: dalmir
- *
- * Created on November 16, 2012, 5:08 PM
+/**
+ * Arduino - Accelerometer driver
+ * 
+ * AccelerometerNunchuk.h
+ * 
+ * The implementation of the Nunchuk accelerometer.
+ * 
+ * @author Dalmir da Silva <dalmirdasilva@gmail.com>
  */
 
-#ifndef ACCELEROMETERNUNCHUCK_H
-#define	ACCELEROMETERNUNCHUCK_H
+#ifndef __ARDUINO_DRIVER_ACCELEROMETER_NUNCHUK_H__
+#define __ARDUINO_DRIVER_ACCELEROMETER_NUNCHUK_H__ 1
 
-
-
-#endif	/* ACCELEROMETERNUNCHUCK_H */
+#define ZEROX 0
+#define ZEROY 0
+#define ZEROZ 0
 
 #include <Wire.h>
+#include <Arduino.h>
+#include <Accelerometer.h>
 
-uint8_t outbuf[6];
-int cnt = 0;
+class AccelerometerNunchuk : public Accelerometer {
+public:
+    
+    enum Axis {
+        AXIS_X = 0x00,
+        AXIS_Y = 0x01,
+        AXIS_Z = 0x02
+    };
 
-void setup() {
-  Serial.begin(9600);  
-  pinMode(A2, OUTPUT); 
-  pinMode(A3, OUTPUT);
-  digitalWrite(A2, LOW);
-  digitalWrite(A3, HIGH);
-  Wire.begin();
-  nunchuck_init();
+    /**
+     * Public constructor.
+     * 
+     * @param sa0           The LSBit of the address.
+     */
+    AccelerometerNunchuk();
 
-}
+    /**
+     * Reads the z axis from the accelerometer device.
+     * 
+     * @retun               The z result.
+     */
+    float readZg(bool updateFrame);
 
-void nunchuck_init () {
-  Wire.beginTransmission(0x52);
-  Wire.write(0x40);
-  Wire.write(0x00);
-  Wire.endTransmission();
-  /*
-  Wire.beginTransmission(0x52);
-  Wire.write(0xFB);
-  Wire.write(0x00);
-  Wire.endTransmission();
-  */
-}
-
-void send_zero() {
-  Wire.beginTransmission(0x52);
-  Wire.write(0x00);
-  Wire.endTransmission();
-}
-
-void loop() {
-  Wire.requestFrom(0x52, 6);
-  while(Wire.available()) {
-    outbuf[cnt] = nunchuk_decode_byte(Wire.read());
-    digitalWrite(13, HIGH);
-    cnt++;
-  }
-
-  // If we recieved the 6 bytes, then go print them
-  if (cnt >= 5) {
-    puts();
-  } else {
-    Serial.println("Not received.");
-  } 
-
-  cnt = 0;
-  send_zero();
-  delay (1000);
-}
-
-void
-puts ()
-{
-  
-  for (int i = 0; i < 6; i++)
-  Serial.println(outbuf[i], DEC);
-  
-  int joy_x_axis = outbuf[0];
-  int joy_y_axis = outbuf[1];
-  int accel_x_axis = outbuf[2] * 2 * 2; 
-  int accel_y_axis = outbuf[3] * 2 * 2;
-  int accel_z_axis = outbuf[4] * 2 * 2;
-
-  int z_button = 0;
-  int c_button = 0;
-
- // byte outbuf[5] contains bits for z and c buttons
- // it also contains the least significant bits for the accelerometer data
- // so we have to check each bit of byte outbuf[5]
-  if ((outbuf[5] >> 0) & 1)
-    {
-      z_button = 1;
-    }
-  if ((outbuf[5] >> 1) & 1)
-    {
-      c_button = 1;
+    /**
+     * Reads the z axis from the accelerometer device without refresh the frame.
+     */
+    virtual float readZg() {
+        return readZg(false);
     }
 
-  if ((outbuf[5] >> 2) & 1)
-    {
-      accel_x_axis += 2;
-    }
-  if ((outbuf[5] >> 3) & 1)
-    {
-      accel_x_axis += 1;
-    }
+    /**
+     * Reads the x axis from the accelerometer device.
+     * 
+     * @param updateFrame   If the frame must be updated.
+     * @retun               The x result.
+     */
+    float readXg(bool updateFrame);
 
-  if ((outbuf[5] >> 4) & 1)
-    {
-      accel_y_axis += 2;
-    }
-  if ((outbuf[5] >> 5) & 1)
-    {
-      accel_y_axis += 1;
+    /**
+     * Reads the x axis from the accelerometer device without refresh the frame.
+     */
+    virtual float readXg() {
+        return readXg(false);
     }
 
-  if ((outbuf[5] >> 6) & 1)
-    {
-      accel_z_axis += 2;
+    /**
+     * Reads the y axis from the accelerometer device.
+     * 
+     * @param updateFrame   If the frame must be updated.
+     * @retun               The y result.
+     */
+    float readYg(bool updateFrame);
+
+    /**
+     * Reads the y axis from the accelerometer device without refresh the frame.
+     */
+    virtual float readYg() {
+        return readYg(false);
     }
-  if ((outbuf[5] >> 7) & 1)
-    {
-      accel_z_axis += 1;
+
+    /**
+     * Reads the Z button state.
+     * 
+     * @param updateFrame   If the frame must be updated.
+     * @retun               The Z button state.
+     */
+    bool readZButton(bool updateFrame);
+    
+    /** 
+     * Reads the Z button state without refresh the frame.
+     */
+    bool readZButton() {
+        return readZButton(false);
     }
 
-  Serial.print (joy_x_axis, DEC);
-  Serial.print ("\t");
+    /**
+     * Reads the C button state.
+     * 
+     * @retun               The C result state.
+     */
+    bool readCButton(bool updateFrame);
+    
+    /** 
+     * Reads the C button state without refresh the frame.
+     */
+    bool readCButton() {
+        return readCButton(false);
+    }
+    
+    /**
+     * Reads the value of the Joystick X.
+     * 
+     * @param updateFrame          If the frame should be read to get fresh data.
+     * @return                     The 0..255 data from Joystick X
+     */
+    unsigned char readXJoystick(bool updateFrame);
+    
+    /** 
+     * Reads the value of the Joystick X without refresh the frame.
+     */
+    unsigned char readXJoystick() {
+        return readXJoystick(false);
+    }
+    
+    /**
+     * Reads the value of the Joystick Y.
+     * 
+     * @param updateFrame          If the frame should be read to get fresh data.
+     * @return                     The 0..255 data from Joystick Y
+     */
+    unsigned char readYJoystick(bool updateFrame);
+    
+    /** 
+     * Reads the value of the Joystick Y without refresh the frame.
+     */
+    unsigned char readYJoystick() {
+        return readYJoystick(false);
+    }
+    
+    /**
+     * Converts to G;
+     * 
+     * @param i             The integer to be converted.
+     */
+    float convertToG(unsigned int i);
+    
+    /**
+     * Read a frame from the device.
+     * 
+     * Frame layout:
+     * 
+     * <pre>
+     * 
+     * Byte  |Function
+     * ------|---------------------------------------------------
+     * 0     |Joystick X
+     * 1     |Joystick Y
+     * 2     |Accelerometer X Bits 9 a 2 (10 bits)
+     * 3     |Accelerometer Y Bits 9 a 2 (10 bits)
+     * 4     |Accelerometer Z Bits 9 a 2 (10 bits)
+     *
+     * 5     |Acel Z|Acel Z|Acel Y|Acel Y|Acel X|Acel X|Bt C|Bt Z|
+     *       |bit 1 |bit 0 |bit 1 |bit 0 |bit 1 |bit 0 |    |    |
+     * 
+     * </pre>
+     */
+    void readFrame();
+    
+    /**
+     * Initializes the device.
+     */
+    void begin();
+    
+    /**
+     * Reads the acceleration of the given axis.
+     * 
+     * @param axis                  The axis to read.
+     * @param updateFrame           If the frame must be updated.
+     * @return                      The acceleration.
+     */
+    unsigned int readAcceleration(Axis axis, bool updateFrame);
 
-  Serial.print (joy_y_axis, DEC);
-  Serial.print ("\t");
+protected:
 
-  Serial.print (accel_x_axis, DEC);
-  Serial.print ("\t");
+    /**
+     * The device address.
+     */
+    unsigned char address;
+    
+    /**
+     * A frame.
+     */
+    unsigned char initializationSequence[2];
+    
+    /**
+     * A frame.
+     */
+    unsigned char frame[6];
+    
+    /**
+     * Decodes the data from device.
+     */
+    unsigned char decode(unsigned char b);
+};
 
-  Serial.print (accel_y_axis, DEC);
-  Serial.print ("\t");
-
-  Serial.print (accel_z_axis, DEC);
-  Serial.print ("\t");
-
-  Serial.print (z_button, DEC);
-  Serial.print ("\t");
-
-  Serial.print (c_button, DEC);
-  Serial.print ("\t");
-
-  Serial.print ("\r\n");
-}
-
-char
-nunchuk_decode_byte (char x)
-{
-  //x = (x ^ 0x17) + 0x17;
-  return x;
-}
+#endif /* __ARDUINO_DRIVER_ACCELEROMETER_NUNCHUK_H__ */

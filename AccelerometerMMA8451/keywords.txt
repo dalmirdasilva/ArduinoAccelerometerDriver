@@ -48,6 +48,7 @@ enableInterrupt KEYWORD2
 disableInterrupt    KEYWORD2
 routeInterruptToInt1    KEYWORD2
 routeInterruptToInt2    KEYWORD2
+routeInterrupt  KEYWORD2
 setInterruptPolarity    KEYWORD2
 setAslpOutputDataRate   KEYWORD2
 setReadMode KEYWORD2

@@ -1,5 +1,5 @@
 ARDUINO_LIB_PATH=/usr/share/arduino/libraries
-LIB_LIST=Accelerometer AccelerometerADXL335 AccelerometerMMA8451 AccelerometerMMA7455 AccelerometerVirtual
+LIB_LIST=Accelerometer AccelerometerADXL335 AccelerometerNunchuk AccelerometerMMA8451 AccelerometerMMA7455 AccelerometerVirtual
 SOURCE_PATH=`pwd`
 
 all: 
