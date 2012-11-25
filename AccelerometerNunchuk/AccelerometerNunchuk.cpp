@@ -83,6 +83,7 @@ void AccelerometerNunchuk::readFrame() {
     Wire.beginTransmission(address);
     Wire.write(0x00);
     Wire.endTransmission();
+    delay(1);
     Wire.requestFrom(address, (unsigned char) 6);
     for (int i = 0; i < 6; i++) {
         while (!Wire.available());
