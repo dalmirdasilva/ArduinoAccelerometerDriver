@@ -168,6 +168,15 @@ public:
     void readFrame();
     
     /**
+     * Gets the frame pointer.
+     * 
+     * @return 
+     */
+    unsigned char* getFrame() {
+       return (unsigned char*) frame; 
+    }
+    
+    /**
      * Initializes the device.
      */
     void begin();

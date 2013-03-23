@@ -75,7 +75,7 @@ unsigned int AccelerometerNunchuk::readAcceleration(Axis axis, bool updateFrame)
     unsigned int aux = 0x0000;
     aux |= frame[2 + axis];
     aux <<= 2;
-    aux |= (frame[5] >> 2 + (2 * axis)) & 0x03;
+    aux |= ((frame[5] >> 2) + (2 * axis)) & 0x03;
     return aux;
 }
 
