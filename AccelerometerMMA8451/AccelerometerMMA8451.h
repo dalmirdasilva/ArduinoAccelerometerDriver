@@ -15,7 +15,7 @@
 #include <Arduino.h>
 #include <Accelerometer.h>
 
-class AccelerometerMMA8451 : public Accelerometer {
+class AccelerometerMMA8451 : public Accelerometer, public RegisterBasedWiredDevice {
 public:
 
     /**
@@ -960,6 +960,13 @@ public:
         PUSH_PULL = 0x00,
         OPEN_DRAIN = 0x01
     };
+    
+    /**
+     * Internal errors
+     */
+    enum InternalErrors {
+        BUS_ERROR_READ = 0x00
+    };
 
     /**
      * Public constructor.
@@ -1311,38 +1318,6 @@ public:
     void setPushPullOpenDrain(PushPullOpenDrain ppod);
 
     /**
-     * Writes into the sensor register.
-     * 
-     * @param reg       The new register.
-     */
-    void writeRegister(Location location, unsigned char v);
-
-    /**
-     * Reads the sensor register.
-     * 
-     * @return          The current register value.
-     */
-    unsigned char readRegister(Location location);
-
-    /**
-     * Writes a block of data into the device starting at the 'to' register.
-     * 
-     * @param to                The address to write.
-     * @param buf               The buffer to be used.
-     * @param len               The number of bytes to write.
-     */
-    void writeRegisterBlock(unsigned char to, unsigned char* buf, unsigned char len);
-
-    /**
-     * Reads a block of data from the device starting at the 'from' register.
-     * 
-     * @param from              The address to read.
-     * @param buf               The buffer to be used.
-     * @param len               The number of bytes to read.
-     */
-    void readRegisterBlock(unsigned char from, unsigned char* buf, unsigned char len);
-
-    /**
      * Converts an array of chars into a float type.
      * 
      * @param buf               1 (8-bit) our 2 (14-bit) bytes to be converted.  
@@ -1350,22 +1325,13 @@ public:
      *                          value.
      */
     float convertToG(unsigned char* buf, bool fastRead);
-
+    
     /**
-     * Configures the register.
+     * Gets the last error happened.
      * 
-     * Basically it reads the register from the device. Applies the given 
-     * mask on such register and makes an OR bitwise operation whit the
-     * v value. 
-     * 
-     * (the v value will be masked to only use the bits of the 
-     * corresponding mask).
-     * 
-     * @param reg
-     * @param mask
-     * @param v
+     * @return                  The last error, 0 means no error.
      */
-    void configureRegisterBits(Location location, Mask mask, unsigned char v);
+    unsigned char gerLastError();
 
 protected:
 
@@ -1378,12 +1344,11 @@ protected:
      * The interruption 2 pin.
      */
     int int2Pin;
-
-
+    
     /**
-     * The device address.
+     * Last error
      */
-    unsigned char address;
+    unsigned char lastError;
 
     /**
      * Holds the current Dynamic Range Settings

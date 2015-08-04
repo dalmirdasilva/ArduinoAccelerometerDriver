@@ -13,11 +13,9 @@
 
 #include "AccelerometerMMA8451.h"
 
-AccelerometerMMA8451::AccelerometerMMA8451(bool sa0) {
-    this->address = 0x1c | (sa0 & 0x01);
+AccelerometerMMA8451::AccelerometerMMA8451(bool sa0) : RegisterBasedWiredDevice(0x1c | (sa0 & 0x01)) {
     xyzDataCfg.FS = 0x00;
     ctrlReg1.F_READ = 0;
-    Wire.begin();
 }
 
 void AccelerometerMMA8451::deviceActivation(DeviceActivation activation) {
@@ -26,12 +24,17 @@ void AccelerometerMMA8451::deviceActivation(DeviceActivation activation) {
 
 bool AccelerometerMMA8451::isDataReady() {
     STATUSbits status;
-    status.value = readRegister(STATUS);
+    int v = readRegister(STATUS);
+    if (v == -1) {
+        lastError = BUS_ERROR_READ;
+        return false;
+    }
+    status.value = v & 0xff;
     return (bool) status.ZYXDR;
 }
 
 float AccelerometerMMA8451::readXg() {
-    bool fastRead = (bool)ctrlReg1.F_READ;
+    bool fastRead = (bool) ctrlReg1.F_READ;
     unsigned char size = fastRead ? 1 : 2;
     unsigned char buf[size];
     readRegisterBlock(OUT_X_MSB, buf, size);
@@ -171,7 +174,6 @@ unsigned char AccelerometerMMA8451::getSysmod() {
 }
 
 float AccelerometerMMA8451::convertToG(unsigned char* buf, bool fastRead) {
-
     if (fastRead) {
         float counts[] = {64.0, 32.0, 16.0};
         return ((char) buf[0]) / counts[xyzDataCfg.FS];
@@ -185,46 +187,12 @@ float AccelerometerMMA8451::convertToG(unsigned char* buf, bool fastRead) {
     }
 }
 
-void AccelerometerMMA8451::configureRegisterBits(Location location, Mask mask, unsigned char v) {
-    unsigned char n;
-    n = readRegister(location);
-    n &= ~((unsigned char) mask);
-    n |= v & ((unsigned char) mask);
-    writeRegister(location, n);
-}
-
 void AccelerometerMMA8451::setPushPullOpenDrain(PushPullOpenDrain ppod) {
     configureRegisterBits(CTRL_REG3, CTRL_REG3_PP_OD, (unsigned char) ppod << 1);
 }
 
-void AccelerometerMMA8451::writeRegister(Location location, unsigned char v) {
-    writeRegisterBlock((unsigned char) location, &v, 1);
-}
-
-unsigned char AccelerometerMMA8451::readRegister(Location location) {
-    unsigned char v;
-    readRegisterBlock((unsigned char) location, &v, 1);
-    return v;
-}
-
-void AccelerometerMMA8451::writeRegisterBlock(unsigned char to, unsigned char* buf, unsigned char len) {
-    Wire.beginTransmission(address);
-    Wire.write(to);
-    for (int i = 0; i < len; i++) {
-        Wire.write(buf[i]);
-    }
-    Wire.endTransmission();
-}
-
-void AccelerometerMMA8451::readRegisterBlock(unsigned char from, unsigned char* buf, unsigned char len) {
-    Wire.beginTransmission(address);
-    Wire.write(from);
-    Wire.endTransmission(false);
-    Wire.requestFrom(address, len);
-    for (int i = 0; i < len; i++) {
-        while (!Wire.available());
-        buf[i] = Wire.read();
-    }
+unsigned char AccelerometerMMA8451::gerLastError() {
+    return lastError;
 }
 
 #endif /* __ARDUINO_DRIVER_ACCELEROMETER_MMA8451_CPP__ */
