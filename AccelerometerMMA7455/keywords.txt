@@ -1,0 +1,45 @@
+########################################################################
+# Syntax Coloring Map For AccelerometerMMA7455
+########################################################################
+
+########################################################################
+# Datatypes (KEYWORD1)
+########################################################################
+
+AccelerometerMMA7455    KEYWORD1
+Register    KEYWORD1
+Location    KEYWORD1
+Mask    KEYWORD1
+DeviceMode  KEYWORD1
+DynamicRange    KEYWORD1
+DigitalFilterBandWidth  KEYWORD1
+InterruptConfiguration  KEYWORD1
+Axis    KEYWORD1
+DetectionCondition  KEYWORD1
+
+########################################################################
+# Methods and Functions (KEYWORD2)
+########################################################################
+
+readXg	KEYWORD2
+readYg	KEYWORD2
+readZg	KEYWORD2
+isDataReady KEYWORD2
+setDeviceMode   KEYWORD2
+standby KEYWORD2
+measurementMode KEYWORD2
+levelDetectionMode KEYWORD2
+pulseDetectionMode KEYWORD2
+setUse8bit  KEYWORD2
+setDetectionCondition   KEYWORD2
+setDynamicRange KEYWORD2
+enableInterrupt KEYWORD2
+disableInterrupt    KEYWORD2
+setInterruptConfiguration   KEYWORD2
+clearInterruptLatch KEYWORD2
+writeRegister   KEYWORD2
+readRegister    KEYWORD2
+writeRegisterBlock  KEYWORD2
+readRegisterBlock   KEYWORD2
+convertToG  KEYWORD2
+configureRegisterBits   KEYWORD2
