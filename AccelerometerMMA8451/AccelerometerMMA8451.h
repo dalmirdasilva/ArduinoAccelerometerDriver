@@ -659,10 +659,10 @@ public:
      * 
      * <pre>
      * FS1 FS0  g Range
-     * 0    0   ±2g
-     * 0    1   ±4g
-     * 1    0   ±8g
-     * 1    1   —
+     * 0    0   +/-2g
+     * 0    1   +/-4g
+     * 1    0   +/-8g
+     * 1    1   -
      * </pre>
      */
     enum DynamicRange {
@@ -807,9 +807,9 @@ public:
     };
 
     /**
-     * Back/Front Trip Angle Threshold. Default: 01 ≥ ±75°. 
-     * Step size is 5°. 
-     * Range: ±(65° to 80°).
+     * Back/Front Trip Angle Threshold. Default: 01 >= +/-75º. 
+     * Step size is 5º. 
+     * Range: +/-(65º to 80º).
      */
     enum BackFrontTrip {
         BKFR_80 = 0x00,
@@ -819,10 +819,10 @@ public:
     };
 
     /**
-     * Z-Lock Angle Threshold. Range is from 14° to 43°. 
-     * Step size is 4°.
-     * Default value: 100 ≥ 29°. 
-     * Maximum value: 111 ≥ 43°.
+     * Z-Lock Angle Threshold. Range is from 14º to 43º. 
+     * Step size is 4º.
+     * Default value: 100 >= 29º. 
+     * Maximum value: 111 >= 43º.
      */
     enum ZLockThresholdAngle {
         ZLOCK_14 = 0x00,
@@ -849,19 +849,19 @@ public:
     };
 
     /**
-     * Trip Angles with Hysteresis for 45° Angle
+     * Trip Angles with Hysteresis for 45º Angle
      * 
      * <pre>
      * Hysteresis       Hysteresis      Landscape to Portrait   Portrait to Landscape
-     * Register Value   ± Angle Range   Trip Angle              Trip Angle
-     * 0                ±0              45°                     45°
-     * 1                ±4              49°                     41°
-     * 2                ±7              52°                     38°
-     * 3                ±11             56°                     34°
-     * 4                ±14             59°                     31°
-     * 5                ±17             62°                     28°
-     * 6                ±21             66°                     24°
-     * 7                ±24             69°                     21°
+     * Register Value   +/- Angle Range   Trip Angle              Trip Angle
+     * 0                +/-0              45º                     45º
+     * 1                +/-4              49º                     41º
+     * 2                +/-7              52º                     38º
+     * 3                +/-11             56º                     34º
+     * 4                +/-14             59º                     31º
+     * 5                +/-17             62º                     28º
+     * 6                +/-21             66º                     24º
+     * 7                +/-24             69º                     21º
      * </pre>
      */
     enum HysteresisAngle {
@@ -1070,10 +1070,10 @@ public:
      * 
      * <pre>
      * FS1  FS0 g Range
-     * 0    0   ±2g
-     * 0    1   ±4g
-     * 1    0   ±8g
-     * 1    1   —
+     * 0    0   +/-2g
+     * 0    1   +/-4g
+     * 1    0   +/-8g
+     * 1    1   -
      * </pre>
      */
     void setDynamicRange(DynamicRange range);
@@ -1106,9 +1106,9 @@ public:
     /**
      * Sets the Back/Front Trip Angle Threshold. 
      * 
-     * Default: 01 ≥ ±75°. 
-     * Step size is 5°.
-     * Range: ±(65° to 80°).
+     * Default: 01 >= +/-75º. 
+     * Step size is 5º.
+     * Range: +/-(65º to 80º).
      * 
      * @param trip              The trip.
      */
@@ -1117,20 +1117,20 @@ public:
     /**
      * Sets the Z-Lock Angle Threshold. 
      * 
-     * Range is from 14° to 43°. 
-     * Step size is 4°.
-     * Default value: 100 ≥ 29°. 
-     * Maximum value: 111 ≥ 43°.
+     * Range is from 14º to 43º. 
+     * Step size is 4º.
+     * Default value: 100 >= 29º. 
+     * Maximum value: 111 >= 43º.
      * 
      * @param angle             The angle.
      */
     void setZLockThresholdAngle(ZLockThresholdAngle angle);
 
     /**
-     * Sets Portrait/Landscape trip threshold angle from 15° to 75°.
+     * Sets Portrait/Landscape trip threshold angle from 15º to 75º.
      * 
      * See Table 31 for the values with the corresponding approximate 
-     * threshold angle. Default value: 1_0000 (45°).
+     * threshold angle. Default value: 1_0000 (45º).
      * 
      * @param angle             The angle.
      */
@@ -1141,7 +1141,7 @@ public:
      * 
      * This angle is added to the threshold angle for a smoother 
      * transition from Portrait to Landscape and Landscape to Portrait.
-     * This angle ranges from 0° to ±24°. The default is 100 (±14°).
+     * This angle ranges from 0º to +/-24º. The default is 100 (+/-14º).
      * 
      * @param angle             The angle.
      */
@@ -1285,7 +1285,7 @@ public:
      * FIFO Event Sample Count Watermark. Default value: 00_0000.
      * These bits set the number of FIFO samples required to trigger a 
      * watermark interrupt. A FIFO watermark event flag is raised when 
-     * FIFO sample count F_CNT[5:0] ≥ F_WMRK[5:0] watermark. 
+     * FIFO sample count F_CNT[5:0] >= F_WMRK[5:0] watermark. 
      * 
      * Setting the F_WMRK[5:0] to 00_0000 will disable the FIFO 
      * watermark event flag generation. Also used to set the number of 
