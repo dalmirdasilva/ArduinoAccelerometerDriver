@@ -1,9 +1,9 @@
 /**
  * Arduino - Accelerometer driver
  * 
- * AccelerometerNunchuk.h
+ * AccelerometerNunchuck.h
  * 
- * The implementation of the Nunchuk accelerometer.
+ * The implementation of the Nunchuck accelerometer.
  * 
  * @author Dalmir da Silva <dalmirdasilva@gmail.com>
  */
@@ -19,7 +19,7 @@
 #include <Arduino.h>
 #include <Accelerometer.h>
 
-class AccelerometerNunchuk : public Accelerometer {
+class AccelerometerNunchuck : public Accelerometer {
 public:
     
     enum Axis {
@@ -33,7 +33,7 @@ public:
      * 
      * @param sa0           The LSBit of the address.
      */
-    AccelerometerNunchuk();
+    AccelerometerNunchuck();
 
     /**
      * Reads the z axis from the accelerometer device.

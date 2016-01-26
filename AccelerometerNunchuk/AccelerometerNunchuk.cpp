@@ -1,7 +1,7 @@
 /**
  * Arduino - Accelerometer driver
  * 
- * AccelerometerNunchuk.cpp
+ * AccelerometerNunchuck.cpp
  * 
  * The implementation of the NUNCHUK accelerometer.
  * 
@@ -11,56 +11,56 @@
 #ifndef __ARDUINO_DRIVER_ACCELEROMETER_NUNCHUK_CPP__
 #define __ARDUINO_DRIVER_ACCELEROMETER_NUNCHUK_CPP__ 1
 
-#include "AccelerometerNunchuk.h"
+#include "AccelerometerNunchuck.h"
 
-AccelerometerNunchuk::AccelerometerNunchuk() {
+AccelerometerNunchuck::AccelerometerNunchuck() {
     Wire.begin();
     address = 0x52;
     initializationSequence[0] = 0xf0;
     initializationSequence[1] = 0xaa;
 }
 
-float AccelerometerNunchuk::readXg(bool updateFrame) {
+float AccelerometerNunchuck::readXg(bool updateFrame) {
     return convertToG(readAcceleration(AXIS_X, updateFrame));
 }
 
-float AccelerometerNunchuk::readYg(bool updateFrame) {
+float AccelerometerNunchuck::readYg(bool updateFrame) {
     return convertToG(readAcceleration(AXIS_Y, updateFrame));
 }
 
-float AccelerometerNunchuk::readZg(bool updateFrame) {
+float AccelerometerNunchuck::readZg(bool updateFrame) {
     return convertToG(readAcceleration(AXIS_Z, updateFrame));
 }
 
-bool AccelerometerNunchuk::readZButton(bool updateFrame) {
+bool AccelerometerNunchuck::readZButton(bool updateFrame) {
     if (updateFrame) {
         readFrame();
     }
     return (frame[5] & 0x01) == 0;
 }
 
-bool AccelerometerNunchuk::readCButton(bool updateFrame) {
+bool AccelerometerNunchuck::readCButton(bool updateFrame) {
     if (updateFrame) {
         readFrame();
     }
     return (frame[5] & 0x02) == 0;
 }
 
-unsigned char AccelerometerNunchuk::readXJoystick(bool updateFrame) {
+unsigned char AccelerometerNunchuck::readXJoystick(bool updateFrame) {
     if (updateFrame) {
         readFrame();
     }
     return frame[0];
 }
 
-unsigned char AccelerometerNunchuk::readYJoystick(bool updateFrame) {
+unsigned char AccelerometerNunchuck::readYJoystick(bool updateFrame) {
     if (updateFrame) {
         readFrame();
     }
     return frame[1];
 }
 
-void AccelerometerNunchuk::begin() {
+void AccelerometerNunchuck::begin() {
     Wire.beginTransmission(address);
     for (unsigned char i = 0; i < sizeof (initializationSequence); i++) {
         Wire.write(initializationSequence[i]);
@@ -68,7 +68,7 @@ void AccelerometerNunchuk::begin() {
     Wire.endTransmission();
 }
 
-unsigned int AccelerometerNunchuk::readAcceleration(Axis axis, bool updateFrame) {
+unsigned int AccelerometerNunchuck::readAcceleration(Axis axis, bool updateFrame) {
     if (updateFrame) {
         readFrame();
     }
@@ -79,7 +79,7 @@ unsigned int AccelerometerNunchuk::readAcceleration(Axis axis, bool updateFrame)
     return aux;
 }
 
-void AccelerometerNunchuk::readFrame() {
+void AccelerometerNunchuck::readFrame() {
     Wire.beginTransmission(address);
     Wire.write(0x00);
     Wire.endTransmission();
@@ -91,11 +91,11 @@ void AccelerometerNunchuk::readFrame() {
     }
 }
 
-unsigned char AccelerometerNunchuk::decode(unsigned char b) {
+unsigned char AccelerometerNunchuck::decode(unsigned char b) {
     return (b ^ 0x17) + 0x17;
 }
     
-float AccelerometerNunchuk::convertToG(unsigned int i) {
+float AccelerometerNunchuck::convertToG(unsigned int i) {
     int aux = i & 0x03ff;
     aux -= 512;
     return (float) aux / 256.0;

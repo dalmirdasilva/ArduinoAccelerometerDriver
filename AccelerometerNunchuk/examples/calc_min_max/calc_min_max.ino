@@ -1,13 +1,13 @@
 #include <Wire.h>
 #include <Accelerometer.h>
-#include <AccelerometerNunchuk.h>
+#include <AccelerometerNunchuck.h>
 
-AccelerometerNunchuk nunchuk;
+AccelerometerNunchuck nunchuck;
 char b;
 
 void setup() {
     Serial.begin(9600);
-    nunchuk.begin();
+    nunchuck.begin();
 }
 
 void loop() {
@@ -17,8 +17,8 @@ void loop() {
     unsigned int aux;
     long ms = millis();
     while (ms + 10000 > millis()) {
-        nunchuk.readFrame();
-        aux = nunchuk.readAcceleration(AccelerometerNunchuk::AXIS_X, false);
+        nunchuck.readFrame();
+        aux = nunchuck.readAcceleration(AccelerometerNunchuck::AXIS_X, false);
         
         if (aux < minX) {
             minX = aux;
@@ -26,7 +26,7 @@ void loop() {
         if (aux > maxX) {
             maxX = aux;
         }
-        aux = nunchuk.readAcceleration(AccelerometerNunchuk::AXIS_Y, false);
+        aux = nunchuck.readAcceleration(AccelerometerNunchuck::AXIS_Y, false);
         
         if (aux < minY) {
             minY = aux;
@@ -34,7 +34,7 @@ void loop() {
         if (aux > maxY) {
             maxY = aux;
         }
-        aux = nunchuk.readAcceleration(AccelerometerNunchuk::AXIS_Z, false);
+        aux = nunchuck.readAcceleration(AccelerometerNunchuck::AXIS_Z, false);
         
         if (aux < minZ) {
             minZ = aux;

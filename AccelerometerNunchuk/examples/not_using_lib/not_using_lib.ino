@@ -12,7 +12,6 @@ void setup() {
     digitalWrite(A3, HIGH);
     Wire.begin();
     nunchuck_init();
-
 }
 
 void nunchuck_init() {
@@ -47,8 +46,7 @@ void loop() {
     delay(100);
 }
 
-void
-puts() {
+void puts() {
     
     int joy_x_axis = outbuf[0];
     int joy_y_axis = outbuf[1];

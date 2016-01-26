@@ -1,13 +1,13 @@
 #include <Wire.h>
 #include <Accelerometer.h>
-#include <AccelerometerNunchuk.h>
+#include <AccelerometerNunchuck.h>
 
-AccelerometerNunchuk nunchuk;
+AccelerometerNunchuck nunchuck;
 char b;
 
 void setup() {
     Serial.begin(9600);
-    nunchuk.begin();
+    nunchuck.begin();
 }
 
 void loop() {
@@ -15,78 +15,78 @@ void loop() {
     while (!Serial.available());
     char b = Serial.read();
     
-    nunchuk.readFrame();
+    nunchuck.readFrame();
 
     switch (b) {
         
         case '+':
             unsigned char *f;
-            f = nunchuk.getFrame();
+            f = nunchuck.getFrame();
             for (int i = 0; i < 6; i++) {
                 Serial.write(f[i]);
             }
             break;
         case '_':
             unsigned char out[2];
-            if (nunchuk.readZButton()) {
+            if (nunchuck.readZButton()) {
                 out[0] |= 0x80;
             }
-            if (nunchuk.readCButton()) {
+            if (nunchuck.readCButton()) {
                 out[0] |= 0x40;
             }
-            if (nunchuk.readXJoystick() > 140 + 20) {
+            if (nunchuck.readXJoystick() > 140 + 20) {
                 out[0] |= 0x20;
             }
-            if (nunchuk.readXJoystick() < 140 - 20) {
+            if (nunchuck.readXJoystick() < 140 - 20) {
                 out[0] |= 0x10;
             }
-            if (nunchuk.readYJoystick() > 140 + 20) {
+            if (nunchuck.readYJoystick() > 140 + 20) {
                 out[0] |= 0x08;
             }
-            if (nunchuk.readYJoystick() < 140 - 20) {
+            if (nunchuck.readYJoystick() < 140 - 20) {
                 out[0] |= 0x04;
             }
-            if (nunchuk.readAcceleration(AccelerometerNunchuk::AXIS_X, false) > 512 + 20) {
+            if (nunchuck.readAcceleration(AccelerometerNunchuck::AXIS_X, false) > 512 + 20) {
                 out[0] |= 0x02;
             }
-            if (nunchuk.readAcceleration(AccelerometerNunchuk::AXIS_X, false) < 512 - 20) {
+            if (nunchuck.readAcceleration(AccelerometerNunchuck::AXIS_X, false) < 512 - 20) {
                 out[0] |= 0x01;
             }
-            if (nunchuk.readAcceleration(AccelerometerNunchuk::AXIS_Y, false) < 512 - 20) {
+            if (nunchuck.readAcceleration(AccelerometerNunchuck::AXIS_Y, false) < 512 - 20) {
                 out[1] |= 0x80;
             }
-            if (nunchuk.readAcceleration(AccelerometerNunchuk::AXIS_Y, false) < 512 - 20) {
+            if (nunchuck.readAcceleration(AccelerometerNunchuck::AXIS_Y, false) < 512 - 20) {
                 out[1] |= 0x40;
             }
-            if (nunchuk.readAcceleration(AccelerometerNunchuk::AXIS_Z, false) < 512 - 20) {
+            if (nunchuck.readAcceleration(AccelerometerNunchuck::AXIS_Z, false) < 512 - 20) {
                 out[1] |= 0x20;
             }
-            if (nunchuk.readAcceleration(AccelerometerNunchuk::AXIS_Z, false) < 512 - 20) {
+            if (nunchuck.readAcceleration(AccelerometerNunchuck::AXIS_Z, false) < 512 - 20) {
                 out[1] |= 0x10;
             }
             Serial.write(out[0]);
             Serial.write(out[1]);
             break;
         case 'd':
-            Serial.println(nunchuk.readZButton());
+            Serial.println(nunchuck.readZButton());
             break;
         case 'c':
-            Serial.println(nunchuk.readCButton());
+            Serial.println(nunchuck.readCButton());
             break;
         case 'x':
-            Serial.println(nunchuk.readXg());
+            Serial.println(nunchuck.readXg());
             break;
         case 'y':
-            Serial.println(nunchuk.readYg());
+            Serial.println(nunchuck.readYg());
             break;
         case 'z':
-            Serial.println(nunchuk.readZg());
+            Serial.println(nunchuck.readZg());
             break;
         case 'w':
-            Serial.println(nunchuk.readXJoystick());
+            Serial.println(nunchuck.readXJoystick());
             break;
         case 's':
-            Serial.println(nunchuk.readYJoystick());
+            Serial.println(nunchuck.readYJoystick());
             break;
     }
 }

@@ -1,39 +1,39 @@
 #include <Wire.h>
 #include <Accelerometer.h>
-#include <AccelerometerNunchuk.h>
+#include <AccelerometerNunchuck.h>
 
-AccelerometerNunchuk nunchuk;
+AccelerometerNunchuck nunchuck;
 
 void setup() {
     Serial.begin(9600);
-    nunchuk.begin();
+    nunchuck.begin();
 }
 
 void loop() {
     
-    nunchuk.readFrame();
+    nunchuck.readFrame();
     
     Serial.print("Z button: ");
-    Serial.println(nunchuk.readZButton());
+    Serial.println(nunchuck.readZButton());
     
     Serial.print("C button: ");
-    Serial.println(nunchuk.readCButton());
+    Serial.println(nunchuck.readCButton());
     
     Serial.print("Joystick X: ");
-    Serial.println(nunchuk.readXJoystick());
+    Serial.println(nunchuck.readXJoystick());
     
     
     Serial.print("Joystick Y: ");
-    Serial.println(nunchuk.readYJoystick());
+    Serial.println(nunchuck.readYJoystick());
     
     Serial.print("x: ");
-    Serial.println(nunchuk.readXg());
+    Serial.println(nunchuck.readXg());
     
     Serial.print("y: ");
-    Serial.println(nunchuk.readYg());
+    Serial.println(nunchuck.readYg());
     
     Serial.print("z: ");
-    Serial.println(nunchuk.readZg());
+    Serial.println(nunchuck.readZg());
     
     Serial.println("-----------");
     delay(500);
