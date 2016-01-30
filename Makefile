@@ -1,4 +1,4 @@
-ARDUINO_LIB_PATH=/usr/share/arduino/libraries
+ARDUINO_LIB_PATH=~/Arduino/libraries
 LIB_LIST=Accelerometer AccelerometerADXL335 AccelerometerNunchuk AccelerometerMMA8451 AccelerometerMMA7455 AccelerometerVirtual
 SOURCE_PATH=`pwd`
 
