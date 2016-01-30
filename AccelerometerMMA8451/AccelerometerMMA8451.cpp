@@ -77,6 +77,21 @@ void AccelerometerMMA8451::setPortraitLandscapeDetection(bool enable) {
     configureRegisterBits(PL_CFG, PL_CFG_PL_EN, (enable ? PL_CFG_PL_EN : 0x00));
 }
 
+void AccelerometerMMA8451::setTransientDetection(bool enable, unsigned char axis, bool bypass) {
+    TRANSIENT_CFGbits config;
+    config.ELE = enable;
+    config.value |= (axis & 0x07) << 1;
+    config.HPF_BYP = bypass;
+    writeRegister(TRANSIENT_CFG, config.value);
+}
+
+void AccelerometerMMA8451::setTransientThreshold(bool debounceCounterMode, unsigned char threshold) {
+    TRANSIENT_THSbits config;
+    config.THS = threshold & TRANSIENT_THS_THS;
+    config.DBCNTM = debounceCounterMode & 0x01;
+    writeRegister(TRANSIENT_THS, config.value);
+}
+
 void AccelerometerMMA8451::setBackFrontTrip(BackFrontTrip trip) {
     configureRegisterBits(PL_BF_ZCOMP, PL_BF_ZCOMP_BKFR, (unsigned char) trip << 6);
 }

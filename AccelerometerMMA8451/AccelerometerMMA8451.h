@@ -1105,6 +1105,76 @@ public:
     void setPortraitLandscapeDetection(bool enable);
 
     /**
+     * Transient Detection Enable
+     *
+     * Transient event flags are latched into the TRANSIENT_SRC register.
+     * Reading of the TRANSIENT_SRC register clears the event flag.
+     *
+     * Default value: 0.
+     * 0: Event flag latch disabled;
+     * 1: Event flag latch enabled
+     *
+     * ELE:
+     * Transient event flags are latched into the TRANSIENT_SRC register.
+     * Reading of the TRANSIENT_SRC register clears the event flag.
+     *
+     * Default value: 0.
+     * 0: Event flag latch disabled;
+     * 1: Event flag latch enabled
+     *
+     * ZTEFE:
+     *
+     * Event flag enable on Z transient acceleration greater than transient threshold event.
+     *
+     * Default value: 0.
+     * 0: Event detection disabled;
+     * 1: Raise event flag on measured acceleration delta value greater than transient threshold.
+     *
+     * YTEFE:
+     * Event flag enable on Y transient acceleration greater than transient threshold event.
+     *
+     * Default value: 0.
+     * 0: Event detection disabled;
+     * 1: Raise event flag on measured acceleration delta value greater than transient threshold.
+     *
+     * XTEFE:
+     * Event flag enable on X transient acceleration greater than transient threshold event.
+     *
+     * Default value: 0.
+     * 0: Event detection disabled;
+     * 1: Raise event flag on measured acceleration delta value greater than transient threshold.
+     *
+     * HPF_BYP:
+     * Bypass High-Pass filter.
+     *
+     * Default value: 0.
+     * 0: Data to transient acceleration detection block is through HPF
+     * 1: Data to transient acceleration detection block is NOT through HPF (similar to motion detection function)
+     *
+     * @param enable            The enable flag.
+     * @param axis              0x00000111
+     *                                 |||_ enable on X
+     *                                 ||__ enable on Y
+     *                                 |___ enable on Z
+     * @param bypass            Bypass High-Pass filter.
+     */
+    void setTransientDetection(bool enable, unsigned char axis, bool bypass);
+
+    /**
+     * Transient Threshold.
+     *
+     * The Transient Threshold register sets the threshold limit for the detection of the transient acceleration.
+     * The value in the TRANSIENT_THS register corresponds to a g value which is compared against the values of High-Pass Filtered Data.
+     * If the HighPass Filtered acceleration value exceeds the threshold limit, an event flag is raised and the interrupt is generated if enabled.
+     *
+     * @param debounceCounterMode       Debounce counter mode selection. Default value: 0.
+     *                                  0: increments or decrements debounce;
+     *                                  1: increments or clears counter.
+     * @param threshold                 Transient Threshold: Default value (0x7f mask will be applied)
+     */
+    void setTransientThreshold(bool debounceCounterMode, unsigned char threshold);
+
+    /**
      * Sets the Back/Front Trip Angle Threshold. 
      * 
      * Default: 01 >= +/-75º. 

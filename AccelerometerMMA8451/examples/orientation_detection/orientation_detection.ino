@@ -1,5 +1,6 @@
-
 #include <Wire.h>
+#include <WiredDevice.h>
+#include <RegisterBasedWiredDevice.h>
 #include <Accelerometer.h>
 #include <AccelerometerMMA8451.h>
 
