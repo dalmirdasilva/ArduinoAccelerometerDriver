@@ -9,16 +9,11 @@
  */
 
 AccelerometerMMA8451 acc(0);
-bool ready = false;
+volatile bool ready = false;
 unsigned char buf[6];
 
 void processXYZ(unsigned char* buf) {
     char axis[] = {'x', 'y', 'z'};
-    for (int i = 0; i < 6; i++) {
-        Serial.print(i, DEC);
-        Serial.print(": 0x");
-        Serial.println(buf[i], HEX);
-    }
     for (int i = 0; i < 6; i += 2) {
         Serial.print(axis[i / 2]);
         Serial.print(": ");
@@ -28,11 +23,17 @@ void processXYZ(unsigned char* buf) {
 
 void processTransientData(AccelerometerMMA8451::TRANSIENT_SRCbits transientSource) {
     Serial.print("x: ");
-    Serial.println(transientSource.XTRANSE, HEX);
+    Serial.print(transientSource.XTRANSE, HEX);
+    Serial.print(" px: ");
+    Serial.println(transientSource.X_TRANS_POL);
     Serial.print("y: ");
-    Serial.println(transientSource.YTRANSE, HEX);
+    Serial.print(transientSource.YTRANSE, HEX);
+    Serial.print(" py: ");
+    Serial.println(transientSource.Y_TRANS_POL);
     Serial.print("z: ");
-    Serial.println(transientSource.ZTRANSE, HEX);   
+    Serial.print(transientSource.ZTRANSE, HEX);   
+    Serial.print(" pz: ");
+    Serial.println(transientSource.Z_TRANS_POL);
 }
 
 void isr() {
@@ -53,14 +54,14 @@ void setup() {
     // Set the data rate to 50 Hz (for example, but can choose any sample rate). 
     acc.setOutputDataRate(AccelerometerMMA8451::ODR_50HZ_20_MS);
 
-    // Set the PL_EN bit in Register 0x11 PL_CFG. This will enable the orientation detection.
-    acc.setTransientDetection(true, 0x07, 0x01);
+    // This will enable the transient detection.
+    acc.setTransientDetection(true, 0x7f, 0x00);
 
-    // Set the PL_EN bit in Register 0x11 PL_CFG. This will enable the orientation detection.
-    acc.setTransientThreshold(false, 0x07);
+    // Set the transient threshold.
+    acc.setTransientThreshold(true, 0x0f);
 
     // Set the debounce counter
-    acc.writeRegister(AccelerometerMMA8451::TRANSIENT_COUNT, 0x05);
+    acc.writeRegister(AccelerometerMMA8451::TRANSIENT_COUNT, 0x01);
 
     // Register 0x2D, Control Register 4 configures all embedded features for interrupt detection.
     // To set this device up to run an interrupt service routine: 
