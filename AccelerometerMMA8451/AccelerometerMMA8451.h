@@ -14,8 +14,9 @@
 #include <Wire.h>
 #include <Arduino.h>
 #include <Accelerometer.h>
+#include <RegisterBasedWiredDevice.h>
 
-class AccelerometerMMA8451 : public Accelerometer, public RegisterBasedWiredDevice {
+class AccelerometerMMA8451: public Accelerometer, public RegisterBasedWiredDevice {
 public:
 
     /**
@@ -25,14 +26,14 @@ public:
     union STATUSbits {
 
         struct {
-            unsigned char XDR : 1;
-            unsigned char YDR : 1;
-            unsigned char ZDR : 1;
-            unsigned char ZYXDR : 1;
-            unsigned char XOW : 1;
-            unsigned char YOW : 1;
-            unsigned char ZOW : 1;
-            unsigned char ZYXOW : 1;
+            unsigned char XDR :1;
+            unsigned char YDR :1;
+            unsigned char ZDR :1;
+            unsigned char ZYXDR :1;
+            unsigned char XOW :1;
+            unsigned char YOW :1;
+            unsigned char ZOW :1;
+            unsigned char ZYXOW :1;
         };
         unsigned char value;
     };
@@ -44,9 +45,9 @@ public:
     union F_STATUSbits {
 
         struct {
-            unsigned char F_CNT : 6;
-            unsigned char F_WMRK_FLAG : 1;
-            unsigned char F_OVF : 1;
+            unsigned char F_CNT :6;
+            unsigned char F_WMRK_FLAG :1;
+            unsigned char F_OVF :1;
         };
         unsigned char value;
     };
@@ -59,8 +60,8 @@ public:
     union F_SETUPbits {
 
         struct {
-            unsigned char F_WMRK : 6;
-            unsigned char F_MODE : 2;
+            unsigned char F_WMRK :6;
+            unsigned char F_MODE :2;
         };
         unsigned char value;
     };
@@ -71,12 +72,12 @@ public:
     union TRIG_CFGbits {
 
         struct {
-            unsigned char : 2;
-            unsigned char TRIG_FF_MT : 1;
-            unsigned char TRIG_PULSE : 1;
-            unsigned char TRIG_LNDPRT : 1;
-            unsigned char TRIG_TRANS : 1;
-            unsigned char : 2;
+            unsigned char :2;
+            unsigned char TRIG_FF_MT :1;
+            unsigned char TRIG_PULSE :1;
+            unsigned char TRIG_LNDPRT :1;
+            unsigned char TRIG_TRANS :1;
+            unsigned char :2;
         };
         unsigned char value;
     };
@@ -89,9 +90,9 @@ public:
     union SYSMODbits {
 
         struct {
-            unsigned char SYSMOD : 2;
-            unsigned char FGT : 5;
-            unsigned char FGERR : 1;
+            unsigned char SYSMOD :2;
+            unsigned char FGT :5;
+            unsigned char FGERR :1;
         };
         unsigned char value;
     };
@@ -104,14 +105,14 @@ public:
     union INT_SOURCEbits {
 
         struct {
-            unsigned char SRC_DRDY : 1;
-            unsigned char : 1;
-            unsigned char SRC_FF_MT : 1;
-            unsigned char SRC_PULSE : 1;
-            unsigned char SRC_LNDPRT : 1;
-            unsigned char SRC_TRANS : 1;
-            unsigned char SRC_FIFO : 1;
-            unsigned char SRC_ASLP : 1;
+            unsigned char SRC_DRDY :1;
+            unsigned char :1;
+            unsigned char SRC_FF_MT :1;
+            unsigned char SRC_PULSE :1;
+            unsigned char SRC_LNDPRT :1;
+            unsigned char SRC_TRANS :1;
+            unsigned char SRC_FIFO :1;
+            unsigned char SRC_ASLP :1;
         };
         unsigned char value;
     };
@@ -122,10 +123,10 @@ public:
     union XYZ_DATA_CFGbits {
 
         struct {
-            unsigned char FS : 2;
-            unsigned char : 2;
-            unsigned char HPF_OUT : 1;
-            unsigned char : 3;
+            unsigned char FS :2;
+            unsigned char :2;
+            unsigned char HPF_OUT :1;
+            unsigned char :3;
         };
         unsigned char value;
     };
@@ -138,11 +139,11 @@ public:
     union HP_FILTER_CUTOFFbits {
 
         struct {
-            unsigned char SEL : 2;
-            unsigned char : 2;
-            unsigned char PULSE_LPF_EN : 1;
-            unsigned char PULSE_HPF_BYP : 1;
-            unsigned char : 2;
+            unsigned char SEL :2;
+            unsigned char :2;
+            unsigned char PULSE_LPF_EN :1;
+            unsigned char PULSE_HPF_BYP :1;
+            unsigned char :2;
         };
         unsigned char value;
     };
@@ -155,11 +156,11 @@ public:
     union PL_STATUSbits {
 
         struct {
-            unsigned char BAFRO : 1;
-            unsigned char LAPO : 2;
-            unsigned char : 3;
-            unsigned char LO : 1;
-            unsigned char NEWLP : 1;
+            unsigned char BAFRO :1;
+            unsigned char LAPO :2;
+            unsigned char :3;
+            unsigned char LO :1;
+            unsigned char NEWLP :1;
         };
         unsigned char value;
     };
@@ -172,9 +173,9 @@ public:
     union PL_CFGbits {
 
         struct {
-            unsigned char : 6;
-            unsigned char PL_EN : 1;
-            unsigned char DBCNTM : 1;
+            unsigned char :6;
+            unsigned char PL_EN :1;
+            unsigned char DBCNTM :1;
         };
         unsigned char value;
     };
@@ -187,9 +188,9 @@ public:
     union PL_BF_ZCOMPbits {
 
         struct {
-            unsigned char ZLOCK : 3;
-            unsigned char : 3;
-            unsigned char BKFR : 2;
+            unsigned char ZLOCK :3;
+            unsigned char :3;
+            unsigned char BKFR :2;
         };
         unsigned char value;
     };
@@ -202,8 +203,8 @@ public:
     union P_L_THS_REGbits {
 
         struct {
-            unsigned char HYS : 3;
-            unsigned char P_L_THS : 5;
+            unsigned char HYS :3;
+            unsigned char P_L_THS :5;
         };
         unsigned char value;
     };
@@ -216,12 +217,12 @@ public:
     union FF_MT_CFGbits {
 
         struct {
-            unsigned char : 3;
-            unsigned char XEFE : 1;
-            unsigned char YEFE : 1;
-            unsigned char ZEFE : 1;
-            unsigned char OAE : 1;
-            unsigned char ELE : 1;
+            unsigned char :3;
+            unsigned char XEFE :1;
+            unsigned char YEFE :1;
+            unsigned char ZEFE :1;
+            unsigned char OAE :1;
+            unsigned char ELE :1;
         };
         unsigned char value;
     };
@@ -234,14 +235,14 @@ public:
     union FF_MT_SRCbits {
 
         struct {
-            unsigned char XHP : 1;
-            unsigned char XHE : 1;
-            unsigned char YHP : 1;
-            unsigned char YHE : 1;
-            unsigned char ZHP : 1;
-            unsigned char ZHE : 1;
-            unsigned char : 1;
-            unsigned char EA : 1;
+            unsigned char XHP :1;
+            unsigned char XHE :1;
+            unsigned char YHP :1;
+            unsigned char YHE :1;
+            unsigned char ZHP :1;
+            unsigned char ZHE :1;
+            unsigned char :1;
+            unsigned char EA :1;
         };
         unsigned char value;
     };
@@ -254,8 +255,8 @@ public:
     union FF_MT_THSbits {
 
         struct {
-            unsigned char THS : 7;
-            unsigned char DBCNTM : 1;
+            unsigned char THS :7;
+            unsigned char DBCNTM :1;
         };
         unsigned char value;
     };
@@ -268,12 +269,12 @@ public:
     union TRANSIENT_CFGbits {
 
         struct {
-            unsigned char HPF_BYP : 1;
-            unsigned char XTEFE : 1;
-            unsigned char YTEFE : 1;
-            unsigned char ZTEFE : 1;
-            unsigned char ELE : 1;
-            unsigned char : 3;
+            unsigned char HPF_BYP :1;
+            unsigned char XTEFE :1;
+            unsigned char YTEFE :1;
+            unsigned char ZTEFE :1;
+            unsigned char ELE :1;
+            unsigned char :3;
         };
         unsigned char value;
     };
@@ -286,14 +287,14 @@ public:
     union TRANSIENT_SRCbits {
 
         struct {
-            unsigned char X_TRANS_POL : 1;
-            unsigned char XTRANSE : 1;
-            unsigned char Y_TRANS_POL : 1;
-            unsigned char YTRANSE : 1;
-            unsigned char Z_TRANS_POL : 1;
-            unsigned char ZTRANSE : 1;
-            unsigned char EA : 1;
-            unsigned char : 1;
+            unsigned char X_TRANS_POL :1;
+            unsigned char XTRANSE :1;
+            unsigned char Y_TRANS_POL :1;
+            unsigned char YTRANSE :1;
+            unsigned char Z_TRANS_POL :1;
+            unsigned char ZTRANSE :1;
+            unsigned char EA :1;
+            unsigned char :1;
         };
         unsigned char value;
     };
@@ -306,8 +307,8 @@ public:
     union TRANSIENT_THSbits {
 
         struct {
-            unsigned char THS : 7;
-            unsigned char DBCNTM : 1;
+            unsigned char THS :7;
+            unsigned char DBCNTM :1;
         };
         unsigned char value;
     };
@@ -320,14 +321,14 @@ public:
     union PULSE_CFGbits {
 
         struct {
-            unsigned char XSPEFE : 1;
-            unsigned char XDPEFE : 1;
-            unsigned char YSPEFE : 1;
-            unsigned char YDPEFE : 1;
-            unsigned char ZSPEFE : 1;
-            unsigned char ZDPEFE : 1;
-            unsigned char ELE : 1;
-            unsigned char DPA : 1;
+            unsigned char XSPEFE :1;
+            unsigned char XDPEFE :1;
+            unsigned char YSPEFE :1;
+            unsigned char YDPEFE :1;
+            unsigned char ZSPEFE :1;
+            unsigned char ZDPEFE :1;
+            unsigned char ELE :1;
+            unsigned char DPA :1;
         };
         unsigned char value;
     };
@@ -340,14 +341,14 @@ public:
     union PULSE_SRCbits {
 
         struct {
-            unsigned char POLX : 1;
-            unsigned char POLY : 1;
-            unsigned char POLZ : 1;
-            unsigned char DPE : 1;
-            unsigned char AXX : 1;
-            unsigned char AXY : 1;
-            unsigned char AXZ : 1;
-            unsigned char EA : 1;
+            unsigned char POLX :1;
+            unsigned char POLY :1;
+            unsigned char POLZ :1;
+            unsigned char DPE :1;
+            unsigned char AXX :1;
+            unsigned char AXY :1;
+            unsigned char AXZ :1;
+            unsigned char EA :1;
         };
         unsigned char value;
     };
@@ -360,11 +361,11 @@ public:
     union CTRL_REG1bits {
 
         struct {
-            unsigned char ACTIVE : 1;
-            unsigned char F_READ : 1;
-            unsigned char LNOISE : 1;
-            unsigned char DR : 3;
-            unsigned char ASLP_RATE : 2;
+            unsigned char ACTIVE :1;
+            unsigned char F_READ :1;
+            unsigned char LNOISE :1;
+            unsigned char DR :3;
+            unsigned char ASLP_RATE :2;
         };
         unsigned char value;
     };
@@ -377,12 +378,12 @@ public:
     union CTRL_REG2bits {
 
         struct {
-            unsigned char MODS : 2;
-            unsigned char SLPE : 1;
-            unsigned char SMODS : 2;
-            unsigned char : 1;
-            unsigned char RST : 1;
-            unsigned char ST : 1;
+            unsigned char MODS :2;
+            unsigned char SLPE :1;
+            unsigned char SMODS :2;
+            unsigned char :1;
+            unsigned char RST :1;
+            unsigned char ST :1;
         };
         unsigned char value;
     };
@@ -395,14 +396,14 @@ public:
     union CTRL_REG3bits {
 
         struct {
-            unsigned char PP_OD : 1;
-            unsigned char IPOL : 1;
-            unsigned char : 1;
-            unsigned char WAKE_FF_MT : 1;
-            unsigned char WAKE_PULSE : 1;
-            unsigned char WAKE_LNDPRT : 1;
-            unsigned char WAKE_TRANS : 1;
-            unsigned char FIFO_GATE : 1;
+            unsigned char PP_OD :1;
+            unsigned char IPOL :1;
+            unsigned char :1;
+            unsigned char WAKE_FF_MT :1;
+            unsigned char WAKE_PULSE :1;
+            unsigned char WAKE_LNDPRT :1;
+            unsigned char WAKE_TRANS :1;
+            unsigned char FIFO_GATE :1;
         };
         unsigned char value;
     };
@@ -415,14 +416,14 @@ public:
     union CTRL_REG4bits {
 
         struct {
-            unsigned char INT_EN_DRDY : 1;
-            unsigned char : 1;
-            unsigned char INT_EN_FF_MT : 1;
-            unsigned char INT_EN_PULSE : 1;
-            unsigned char INT_EN_LNDPR : 1;
-            unsigned char INT_EN_TRANS : 1;
-            unsigned char INT_EN_FIFO : 1;
-            unsigned char INT_EN_ASLP : 1;
+            unsigned char INT_EN_DRDY :1;
+            unsigned char :1;
+            unsigned char INT_EN_FF_MT :1;
+            unsigned char INT_EN_PULSE :1;
+            unsigned char INT_EN_LNDPR :1;
+            unsigned char INT_EN_TRANS :1;
+            unsigned char INT_EN_FIFO :1;
+            unsigned char INT_EN_ASLP :1;
         };
         unsigned char value;
     };
@@ -435,14 +436,14 @@ public:
     union CTRL_REG5bits {
 
         struct {
-            unsigned char INT_CFG_DRDY : 1;
-            unsigned char : 1;
-            unsigned char INT_CFG_FF_MT : 1;
-            unsigned char INT_CFG_PULSE : 1;
-            unsigned char INT_CFG_LNDPRT : 1;
-            unsigned char INT_CFG_TRANS : 1;
-            unsigned char INT_CFG_FIFO : 1;
-            unsigned char INT_CFG_ASLP : 1;
+            unsigned char INT_CFG_DRDY :1;
+            unsigned char :1;
+            unsigned char INT_CFG_FF_MT :1;
+            unsigned char INT_CFG_PULSE :1;
+            unsigned char INT_CFG_LNDPRT :1;
+            unsigned char INT_CFG_TRANS :1;
+            unsigned char INT_CFG_FIFO :1;
+            unsigned char INT_CFG_ASLP :1;
         };
         unsigned char value;
     };
@@ -960,7 +961,7 @@ public:
         PUSH_PULL = 0x00,
         OPEN_DRAIN = 0x01
     };
-    
+
     /**
      * Internal errors
      */
@@ -1325,7 +1326,7 @@ public:
      *                          value.
      */
     float convertToG(unsigned char* buf, bool fastRead);
-    
+
     /**
      * Gets the last error happened.
      * 
@@ -1344,7 +1345,7 @@ protected:
      * The interruption 2 pin.
      */
     int int2Pin;
-    
+
     /**
      * Last error
      */

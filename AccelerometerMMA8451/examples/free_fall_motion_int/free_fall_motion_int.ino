@@ -5,20 +5,20 @@
 /**
  * Motion Detection Using the AccelerometerMMA8451
  * 
- Origionally Written by Dalmir da Silva <dalmirdasilva@gmail.com>
- Modified 
- 21NOV2012 Chuck Todd 
-    o Explicitly set only FF_MT interrupt
-    o add code to clear all pending interrupts
- 
- 23NOV2012 Dalmir da Silva
-    o Just minor fixes.
-     
- 
- Connect SCL to AD5/SCL  must have a Voltage convert between Arduino Uno and MMA8451 for each data line.
- Connect SDA to AD4/SDA
- Connect INT1 to D2
-  
+ * Origionally Written by Dalmir da Silva <dalmirdasilva@gmail.com>
+ * Modified 
+ * 21NOV2012 Chuck Todd 
+ *    o Explicitly set only FF_MT interrupt
+ *    o add code to clear all pending interrupts
+ * 
+ * 23NOV2012 Dalmir da Silva
+ *    o Just minor fixes.
+ *     
+ * 
+ * Connect SCL to AD5/SCL  must have a Voltage convert between Arduino Uno and MMA8451 for each data line.
+ * Connect SDA to AD4/SDA
+ * Connect INT1 to D2
+ *  
  * Example Steps for Configuring Motion Detection
  */
 
