@@ -54,7 +54,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="AccelerometerMMA7455/datasheet|AccelerometerMMA8451/datasheet|AccelerometerNunchuk/datasheet" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="AccelerometerNunchuk/datasheet|AccelerometerMMA8451/datasheet|AccelerometerMMA7455/datasheet" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
