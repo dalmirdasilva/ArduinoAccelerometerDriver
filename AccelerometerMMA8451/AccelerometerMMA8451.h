@@ -1407,16 +1407,6 @@ public:
 protected:
 
     /**
-     * The interruption 1 pin.
-     */
-    int int1Pin;
-
-    /**
-     * The interruption 2 pin.
-     */
-    int int2Pin;
-
-    /**
      * Last error
      */
     unsigned char lastError;

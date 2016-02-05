@@ -14,7 +14,7 @@
 #include "AccelerometerMMA8451.h"
 #include <RegisterBasedWiredDevice.h>
 
-AccelerometerMMA8451::AccelerometerMMA8451(bool sa0) : RegisterBasedWiredDevice(0x1c | (sa0 & 0x01)), int1Pin(0), int2Pin(0), lastError(0) {
+AccelerometerMMA8451::AccelerometerMMA8451(bool sa0) : RegisterBasedWiredDevice(0x1c | (sa0 & 0x01)), lastError(0) {
     xyzDataCfg.FS = 0x00;
     ctrlReg1.F_READ = 0;
 }
@@ -113,7 +113,7 @@ void AccelerometerMMA8451::enableInterrupt(Interrupt interrupt) {
 }
 
 void AccelerometerMMA8451::enableInterrupt(Interrupt interrupt, unsigned char routePin) {
-    configureRegisterBits(CTRL_REG4, (Mask) interrupt, (unsigned char) interrupt);
+    enableInterrupt(interrupt);
     routeInterrupt(interrupt, routePin);
 }
 
