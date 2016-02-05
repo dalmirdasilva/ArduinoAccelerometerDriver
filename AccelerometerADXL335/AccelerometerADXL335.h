@@ -31,7 +31,7 @@ class AccelerometerADXL335 : public Accelerometer {
     int zPin;
     
     /**
-     * The arduino power supply voltage.
+     * The Arduino power supply voltage.
      */
     float arduinoPowerSupply;
     
@@ -47,7 +47,7 @@ class AccelerometerADXL335 : public Accelerometer {
     float zeroGBias;
 
     /**
-     * Reads an analog value fro pin.
+     * Reads an analog value from pin.
      * 
      * @param pin
      * @return 
@@ -68,21 +68,21 @@ public:
     /**
      * Reads the x axis from the accelerometer device.
      * 
-     * @retun   The x result.
+     * @return   The x result.
      */
     virtual float readXg();
 
     /**
      * Reads the y axis from the accelerometer device.
      * 
-     * @retun   The y result.
+     * @return   The y result.
      */
     virtual float readYg();
 
     /**
      * Reads the z axis from the accelerometer device.
      * 
-     * @retun   The z result.
+     * @return   The z result.
      */
     virtual float readZg();
 };
