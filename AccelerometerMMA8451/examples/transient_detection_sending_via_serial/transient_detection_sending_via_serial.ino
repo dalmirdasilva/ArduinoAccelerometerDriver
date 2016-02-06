@@ -36,7 +36,7 @@ void processXYZ(unsigned char* buf) {
     for (int i = 0; i < 6; i += 2) {
         Serial.print(axis[i / 2]);
         Serial.print(": ");
-        Serial.println(acc.convertToG(&buf[i], 2));
+        Serial.println(acc.convertToG(&buf[i]));
     }
 }
 

@@ -203,6 +203,10 @@ float AccelerometerMMA8451::convertToG(unsigned char* buf, bool fastRead) {
     }
 }
 
+float AccelerometerMMA8451::convertToG(unsigned char* buf) {
+    return convertToG(buf, ctrlReg1.F_READ);
+}
+
 void AccelerometerMMA8451::setPushPullOpenDrain(PushPullOpenDrain ppod) {
     configureRegisterBits(CTRL_REG3, CTRL_REG3_PP_OD, (unsigned char) ppod << 1);
 }

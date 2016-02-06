@@ -1395,9 +1395,17 @@ public:
     void setPushPullOpenDrain(PushPullOpenDrain ppod);
 
     /**
-     * Converts an array of chars into a float type.
+     * Converts an array of chars into a float type. Using current FAST_READ info.
      * 
-     * @param buf               1 (8-bit) our 2 (14-bit) bytes to be converted.  
+     * @param buf               1 (8-bit) or 2 (14-bit) array of bytes to be converted.
+     *                          value.
+     */
+    float convertToG(unsigned char* buf);
+
+    /**
+     * Converts an array of chars into a float type.
+     *
+     * @param buf               1 (8-bit) or 2 (14-bit) array of bytes to be converted.
      * @param fastRead          boolean indication if the buffer has a fast read
      *                          value.
      */
