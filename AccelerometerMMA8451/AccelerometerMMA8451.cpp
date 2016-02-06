@@ -80,7 +80,7 @@ void AccelerometerMMA8451::setPortraitLandscapeDetection(bool enable) {
 void AccelerometerMMA8451::setTransientDetection(bool enable, unsigned char axis, bool bypass) {
     TRANSIENT_CFGbits config;
     config.ELE = enable;
-    config.value |= (axis & 0x07) << 1;
+    config.TEFE = axis & 0x07;
     config.HPF_BYP = bypass;
     writeRegister(TRANSIENT_CFG, config.value);
 }

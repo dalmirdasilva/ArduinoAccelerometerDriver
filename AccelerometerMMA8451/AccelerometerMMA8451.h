@@ -276,6 +276,12 @@ public:
             unsigned char ELE :1;
             unsigned char :3;
         };
+
+        struct {
+            unsigned char :1;
+            unsigned char TEFE :3;
+            unsigned char :4;
+        };
         unsigned char value;
     };
 
