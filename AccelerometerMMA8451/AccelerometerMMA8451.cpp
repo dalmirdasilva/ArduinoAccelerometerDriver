@@ -14,7 +14,7 @@
 #include "AccelerometerMMA8451.h"
 #include <RegisterBasedWiredDevice.h>
 
-AccelerometerMMA8451::AccelerometerMMA8451(bool sa0) : RegisterBasedWiredDevice(0x1c | (sa0 & 0x01)), lastError(0) {
+AccelerometerMMA8451::AccelerometerMMA8451(bool sa0) : RegisterBasedWiredDevice(MMA8451_ADDRESS | (sa0 & 0x01)), lastError(NO_ERROR) {
     xyzDataCfg.FS = 0x00;
     ctrlReg1.F_READ = 0;
 }
@@ -26,8 +26,8 @@ void AccelerometerMMA8451::deviceActivation(DeviceActivation activation) {
 bool AccelerometerMMA8451::isDataReady() {
     STATUSbits status;
     int v = readRegister(STATUS);
-    if (v == -1) {
-        lastError = BUS_ERROR_READ;
+    if (v < 0) {
+        lastError = (CommunicationError) -(v);
         return false;
     }
     status.value = v & 0xff;
@@ -155,11 +155,11 @@ void AccelerometerMMA8451::setHighPassFilterCutoffFrequency(HighPassFilterCutoff
 }
 
 void AccelerometerMMA8451::highPassFilteredData(bool filtered) {
-    Mask m;
+    unsigned char v;
     if (filtered) {
-        m = XYZ_DATA_CFG_HPF_OUT;
+        v = 0xff;
     }
-    configureRegisterBits(XYZ_DATA_CFG, XYZ_DATA_CFG_HPF_OUT, (unsigned char) m);
+    configureRegisterBits(XYZ_DATA_CFG, XYZ_DATA_CFG_HPF_OUT, v);
 }
 
 void AccelerometerMMA8451::setFifoBufferOverflowMode(FifoBufferOverflowMode mode) {
@@ -190,17 +190,19 @@ unsigned char AccelerometerMMA8451::getSysmod() {
 }
 
 float AccelerometerMMA8451::convertToG(unsigned char* buf, bool fastRead) {
+    float g;
     if (fastRead) {
         float counts[] = {64.0, 32.0, 16.0};
-        return ((char) buf[0]) / counts[xyzDataCfg.FS];
+        g = ((char) buf[0]) / counts[xyzDataCfg.FS];
     } else {
         int aux = 0;
         float counts[] = {16384.0, 8192.0, 4096.0};
         aux = buf[0];
         aux <<= 8;
         aux |= buf[1];
-        return aux / counts[xyzDataCfg.FS];
+        g = aux / counts[xyzDataCfg.FS];
     }
+    return g;
 }
 
 float AccelerometerMMA8451::convertToG(unsigned char* buf) {
@@ -211,7 +213,7 @@ void AccelerometerMMA8451::setPushPullOpenDrain(PushPullOpenDrain ppod) {
     configureRegisterBits(CTRL_REG3, CTRL_REG3_PP_OD, (unsigned char) ppod << 1);
 }
 
-unsigned char AccelerometerMMA8451::gerLastError() {
+AccelerometerMMA8451::CommunicationError AccelerometerMMA8451::gerLastError() {
     return lastError;
 }
 

@@ -16,6 +16,8 @@
 #include <Accelerometer.h>
 #include <RegisterBasedWiredDevice.h>
 
+#define MMA8451_ADDRESS 0x1c
+
 class AccelerometerMMA8451: public Accelerometer, public RegisterBasedWiredDevice {
 public:
 
@@ -969,10 +971,21 @@ public:
     };
 
     /**
-     * Internal errors
+     * Errors
+     *
+     * 1: data too long to fit in transmit buffer
+     * 2: received NACK on transmit of address
+     * 3: received NACK on transmit of data
+     * 4: other error
+     * 5: Timeout
      */
-    enum InternalErrors {
-        BUS_ERROR_READ = 0x00
+    enum CommunicationError {
+        NO_ERROR = 0x00,
+        DATA_TOO_LONG = 0x01,
+        NACK_ON_ADDRESS = 0x02,
+        NACK_ON_DATA = 0x03,
+        OTHER = 0x04,
+        TIMEOUT_ON_READING = 0x05
     };
 
     /**
@@ -1416,14 +1429,14 @@ public:
      * 
      * @return                  The last error, 0 means no error.
      */
-    unsigned char gerLastError();
+    CommunicationError gerLastError();
 
 protected:
 
     /**
      * Last error
      */
-    unsigned char lastError;
+    CommunicationError lastError;
 
     /**
      * Holds the current Dynamic Range Settings
