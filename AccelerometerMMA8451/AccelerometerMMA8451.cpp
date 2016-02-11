@@ -14,7 +14,8 @@
 #include "AccelerometerMMA8451.h"
 #include <RegisterBasedWiredDevice.h>
 
-AccelerometerMMA8451::AccelerometerMMA8451(bool sa0) : RegisterBasedWiredDevice(MMA8451_ADDRESS | (sa0 & 0x01)), lastError(NO_ERROR) {
+AccelerometerMMA8451::AccelerometerMMA8451(bool sa0)
+        : RegisterBasedWiredDevice(MMA8451_ADDRESS | (sa0 & 0x01)), lastError(NO_ERROR) {
     xyzDataCfg.FS = 0x00;
     ctrlReg1.F_READ = 0;
 }
@@ -24,7 +25,7 @@ void AccelerometerMMA8451::deviceActivation(DeviceActivation activation) {
 }
 
 bool AccelerometerMMA8451::isDataReady() {
-    STATUSbits status;
+    STATUSbits status = { 0 };
     int v = readRegister(STATUS);
     if (v < 0) {
         lastError = (CommunicationError) -(v);
@@ -34,32 +35,28 @@ bool AccelerometerMMA8451::isDataReady() {
     return (bool) status.ZYXDR;
 }
 
-float AccelerometerMMA8451::readXg() {
+float AccelerometerMMA8451::readAxisGravity(unsigned char axisRegister) {
     bool fastRead = (bool) ctrlReg1.F_READ;
     unsigned char size = fastRead ? 1 : 2;
     unsigned char buf[size];
-    readRegisterBlock(OUT_X_MSB, buf, size);
+    readRegisterBlock(axisRegister, buf, size);
     return convertToG(buf, fastRead);
+}
+
+float AccelerometerMMA8451::readXg() {
+    return readAxisGravity(OUT_X_MSB);
 }
 
 float AccelerometerMMA8451::readYg() {
-    bool fastRead = (bool)ctrlReg1.F_READ;
-    unsigned char size = fastRead ? 1 : 2;
-    unsigned char buf[size];
-    readRegisterBlock(OUT_Y_MSB, buf, size);
-    return convertToG(buf, fastRead);
+    return readAxisGravity(OUT_Y_MSB);
 }
 
 float AccelerometerMMA8451::readZg() {
-    bool fastRead = (bool)ctrlReg1.F_READ;
-    unsigned char size = fastRead ? 1 : 2;
-    unsigned char buf[size];
-    readRegisterBlock(OUT_Z_MSB, buf, size);
-    return convertToG(buf, fastRead);
+    return readAxisGravity(OUT_Z_MSB);
 }
 
 void AccelerometerMMA8451::readXYZ(unsigned char* buf) {
-    bool fastRead = (bool)ctrlReg1.F_READ;
+    bool fastRead = (bool) ctrlReg1.F_READ;
     unsigned char size = fastRead ? 3 : 6;
     readRegisterBlock(OUT_X_MSB, buf, size);
 }
@@ -78,7 +75,7 @@ void AccelerometerMMA8451::setPortraitLandscapeDetection(bool enable) {
 }
 
 void AccelerometerMMA8451::setTransientDetection(bool enable, unsigned char axis, bool bypass) {
-    TRANSIENT_CFGbits config;
+    TRANSIENT_CFGbits config = { 0 };
     config.ELE = enable;
     config.TEFE = axis & 0x07;
     config.HPF_BYP = bypass;
@@ -86,7 +83,7 @@ void AccelerometerMMA8451::setTransientDetection(bool enable, unsigned char axis
 }
 
 void AccelerometerMMA8451::setTransientThreshold(bool debounceCounterMode, unsigned char threshold) {
-    TRANSIENT_THSbits config;
+    TRANSIENT_THSbits config = { 0 };
     config.THS = threshold & TRANSIENT_THS_THS;
     config.DBCNTM = debounceCounterMode & 0x01;
     writeRegister(TRANSIENT_THS, config.value);
@@ -172,19 +169,19 @@ void AccelerometerMMA8451::setFifoWatermark(unsigned char watermark) {
 }
 
 bool AccelerometerMMA8451::getFifoGateError() {
-    SYSMODbits sysmod;
+    SYSMODbits sysmod = { 0 };
     sysmod.value = readRegister(SYSMOD);
     return (bool) sysmod.FGERR;
 }
 
 unsigned char AccelerometerMMA8451::getFifoFgt() {
-    SYSMODbits sysmod;
+    SYSMODbits sysmod = { 0 };
     sysmod.value = readRegister(SYSMOD);
     return (unsigned char) sysmod.FGT;
 }
 
 unsigned char AccelerometerMMA8451::getSysmod() {
-    SYSMODbits sysmod;
+    SYSMODbits sysmod = { 0 };
     sysmod.value = readRegister(SYSMOD);
     return (unsigned char) sysmod.SYSMOD;
 }
@@ -192,11 +189,11 @@ unsigned char AccelerometerMMA8451::getSysmod() {
 float AccelerometerMMA8451::convertToG(unsigned char* buf, bool fastRead) {
     float g;
     if (fastRead) {
-        float counts[] = {64.0, 32.0, 16.0};
+        float counts[] = { 64.0, 32.0, 16.0 };
         g = ((char) buf[0]) / counts[xyzDataCfg.FS];
     } else {
         int aux = 0;
-        float counts[] = {16384.0, 8192.0, 4096.0};
+        float counts[] = { 16384.0, 8192.0, 4096.0 };
         aux = buf[0];
         aux <<= 8;
         aux |= buf[1];

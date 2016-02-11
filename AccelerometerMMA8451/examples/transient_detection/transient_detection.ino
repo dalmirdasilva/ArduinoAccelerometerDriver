@@ -51,7 +51,7 @@ void setup() {
     acc.setOutputDataRate(AccelerometerMMA8451::ODR_50HZ_20_MS);
 
     // This will enable the transient detection.
-    acc.setTransientDetection(true, 0x7f, 0x00);
+    acc.setTransientDetection(true, 0x07, 0x00);
 
     // Set the transient threshold.
     acc.setTransientThreshold(true, 0x0f);

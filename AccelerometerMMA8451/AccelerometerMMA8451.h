@@ -1171,10 +1171,12 @@ public:
      * 1: Data to transient acceleration detection block is NOT through HPF (similar to motion detection function)
      *
      * @param enable            The enable flag.
+     * <pre>
      * @param axis              0x00000111
      *                                 |||_ enable on X
      *                                 ||__ enable on Y
      *                                 |___ enable on Z
+     * </pre>
      * @param bypass            Bypass High-Pass filter.
      */
     void setTransientDetection(bool enable, unsigned char axis, bool bypass);
@@ -1453,6 +1455,13 @@ protected:
      * unnecessary read operations on the device.
      */
     CTRL_REG1bits ctrlReg1;
+
+    /**
+     * Generic method to convert an axis to g.
+     *
+     * @param axisRegister              One of 3 possible register which contains the axis data (OUT_X_MSB, OUT_Y_MSB or OUT_Z_MSB)
+     */
+    float readAxisGravity(unsigned char axisRegister);
 };
 
 #endif /* __ARDUINO_DRIVER_ACCELEROMETER_MMA8451_H__ */
