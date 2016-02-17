@@ -5,31 +5,31 @@ AccelerometerMPU9250::AccelerometerMPU9250(bool ad0)
     config.value = 0x00;
 }
 
-float AccelerometerMPU9250::readXg() {
+float AccelerometerMPU9250::readAxisGravity(unsigned char axisRegister) {
     unsigned char buf[2];
-    readRegisterBlock(ACCEL_XOUT_H, buf, 2);
+    readRegisterBlock(axisRegister, buf, 2);
     return convertToG(buf);
+}
+
+float AccelerometerMPU9250::readXg() {
+    return readAxisGravity(ACCEL_XOUT_H);
 }
 
 float AccelerometerMPU9250::readYg() {
-    unsigned char buf[2];
-    readRegisterBlock(ACCEL_YOUT_H, buf, 2);
-    return convertToG(buf);
+    return readAxisGravity(ACCEL_YOUT_H);
 }
 
 float AccelerometerMPU9250::readZg() {
-    unsigned char buf[2];
-    readRegisterBlock(ACCEL_ZOUT_H, buf, 2);
-    return convertToG(buf);
+    return readAxisGravity(ACCEL_ZOUT_H);
 }
 
 void AccelerometerMPU9250::readXYZ(unsigned char* buf) {
     readRegisterBlock(ACCEL_XOUT_H, buf, 6);
 }
 
-void AccelerometerMPU9250::setFullScale(FullScale fs) {
-    configureRegisterBits(ACCEL_CONFIG, ACCEL_CONFIG_ACCEL_FS_SEL, (unsigned char) fs);
-    config.ACCEL_FS_SEL = fs;
+void AccelerometerMPU9250::setFullScaleRange(FullScaleRange fsr) {
+    configureRegisterBits(ACCEL_CONFIG, ACCEL_CONFIG_ACCEL_FS_SEL, (unsigned char) fsr);
+    config.ACCEL_FS_SEL = fsr;
 }
 
 void AccelerometerMPU9250::setLowPassFilter(bool enable, LowPassFilter lpf) {

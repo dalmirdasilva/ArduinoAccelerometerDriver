@@ -212,7 +212,7 @@ public:
      * 1    1   +/-16g
      * </pre>
      */
-    enum FullScale {
+    enum FullScaleRange {
         FS_SEL_2G = 0x00,
         FS_SEL_4G = 0x01,
         FS_SEL_8G = 0x02,
@@ -329,6 +329,13 @@ public:
     AccelerometerMPU9250(bool ad0);
 
     /**
+     * Generic method to convert an axis to g.
+     *
+     * @param axisRegister              One of 3 possible register which contains the axis data (ACCEL_XOUT_H, ACCEL_YOUT_H or ACCEL_ZOUT_H)
+     */
+    float readAxisGravity(unsigned char axisRegister);
+
+    /**
      * Reads the x axis from the accelerometer device.
      *
      * @retun   The x result.
@@ -365,7 +372,7 @@ public:
      * @param fs    FullScale
      * @see ACCEL_CONFIG
      */
-    void setFullScale(FullScale fs);
+    void setFullScaleRange(FullScaleRange fsr);
 
     /**
      * Set low pass filter setting
