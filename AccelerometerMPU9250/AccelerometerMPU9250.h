@@ -307,10 +307,10 @@ public:
         AXIS_X = 0x20,
         AXIS_Y = 0x10,
         AXIS_Z = 0x08,
-        AXIS_XY = 0x20 | 0x10,
-        AXIS_XZ = 0x20 | 0x08,
-        AXIS_YZ = 0x10 | 0x08,
-        AXIS_XYZ = 0x20 | 0x10 | 0x08
+        AXIS_XY = AXIS_X | AXIS_Y,
+        AXIS_XZ = AXIS_X | AXIS_Z,
+        AXIS_YZ = AXIS_Y | AXIS_Z,
+        AXIS_XYZ = AXIS_X | AXIS_Y | AXIS_Z
     };
 
     /**

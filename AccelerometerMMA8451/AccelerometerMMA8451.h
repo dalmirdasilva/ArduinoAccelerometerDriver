@@ -586,6 +586,7 @@ public:
         TRANSIENT_CFG_XTEFE = 0x02,
         TRANSIENT_CFG_YTEFE = 0x04,
         TRANSIENT_CFG_ZTEFE = 0x08,
+        TRANSIENT_CFG_TEFE = 0x07,
         TRANSIENT_CFG_ELE = 0x10,
 
         TRANSIENT_SRC_X_TRANS_POL = 0x01,
@@ -986,6 +987,20 @@ public:
         NACK_ON_DATA = 0x03,
         OTHER = 0x04,
         TIMEOUT_ON_READING = 0x05
+    };
+
+    /**
+     * Axis
+     */
+    enum TransientDetectionAxis {
+        TRANS_AXIS_NONE = 0x00,
+        TRANS_AXIS_X = 0x01,
+        TRANS_AXIS_Y = 0x02,
+        TRANS_AXIS_Z = 0x04,
+        TRANS_AXIS_XY = TRANS_AXIS_X | TRANS_AXIS_Y,
+        TRANS_AXIS_XZ = TRANS_AXIS_X | TRANS_AXIS_Z,
+        TRANS_AXIS_YZ = TRANS_AXIS_Y | TRANS_AXIS_Z,
+        TRANS_AXIS_XYZ = TRANS_AXIS_X | TRANS_AXIS_Y | TRANS_AXIS_Z
     };
 
     /**
