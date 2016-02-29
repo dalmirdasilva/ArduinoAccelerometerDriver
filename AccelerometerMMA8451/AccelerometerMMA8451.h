@@ -226,6 +226,11 @@ public:
             unsigned char OAE :1;
             unsigned char ELE :1;
         };
+        struct {
+            unsigned char :3;
+            unsigned char EFE :3;
+            unsigned char :2;
+        };
         unsigned char value;
     };
 
@@ -568,6 +573,7 @@ public:
         FF_MT_CFG_XEFE = 0x08,
         FF_MT_CFG_YEFE = 0x10,
         FF_MT_CFG_ZEFE = 0x20,
+        FF_MT_CFG_EFE = 0x07,
         FF_MT_CFG_OAE = 0x40,
         FF_MT_CFG_ELE = 0x80,
 
@@ -992,15 +998,23 @@ public:
     /**
      * Axis
      */
-    enum TransientDetectionAxis {
-        TRANS_AXIS_NONE = 0x00,
-        TRANS_AXIS_X = 0x01,
-        TRANS_AXIS_Y = 0x02,
-        TRANS_AXIS_Z = 0x04,
-        TRANS_AXIS_XY = TRANS_AXIS_X | TRANS_AXIS_Y,
-        TRANS_AXIS_XZ = TRANS_AXIS_X | TRANS_AXIS_Z,
-        TRANS_AXIS_YZ = TRANS_AXIS_Y | TRANS_AXIS_Z,
-        TRANS_AXIS_XYZ = TRANS_AXIS_X | TRANS_AXIS_Y | TRANS_AXIS_Z
+    enum DetectionAxis {
+        AXIS_NONE = 0x00,
+        AXIS_X = 0x01,
+        AXIS_Y = 0x02,
+        AXIS_Z = 0x04,
+        AXIS_XY = AXIS_X | AXIS_Y,
+        AXIS_XZ = AXIS_X | AXIS_Z,
+        AXIS_YZ = AXIS_Y | AXIS_Z,
+        AXIS_XYZ = AXIS_X | AXIS_Y | AXIS_Z
+    };
+
+    /**
+     * Motion detect or Freefall detect
+     */
+    enum DetectionFunction {
+        FREEFALL_DETECT = 0x00,
+        MOTION_DETECT = 0x01
     };
 
     /**
@@ -1209,6 +1223,100 @@ public:
      * @param threshold                 Transient Threshold: Default value (0x7f mask will be applied)
      */
     void setTransientThreshold(bool debounceCounterMode, unsigned char threshold);
+
+    /**
+     * The TRANSIENT_COUNT sets the minimum number of debounce counts continuously matching the condition where the
+     * unsigned value of high-pass filtered data is greater than the user specified value of TRANSIENT_THS.
+     *
+     * The time step for the transient detection debounce counter is set by the value of the system ODR and the Oversampling mode.
+     *
+     * @param count                     The number of debounce sample counts.
+     */
+    void setTransientCount(unsigned char count);
+
+    /**
+     * This is the Freefall/Motion configuration register for setting up the conditions of the freefall or motion function.
+     *
+     * ELE:
+     * Event Latch Enable: Event flags are latched into FF_MT_SRC register. Reading of the FF_MT_SRC register clears the event
+     * flag EA and all FF_MT_SRC bits. Default value: 0.
+     * 0: Event flag latch disabled;
+     * 1: event flag latch enabled
+     *
+     * OAE:
+     * Motion detect / Freefall detect flag selection. Default value: 0. (Freefall Flag)
+     * 0: Freefall Flag (Logical AND combination)
+     * 1: Motion Flag (Logical OR combination)
+     *
+     * ZEFE:
+     * Event flag enable on Z Default value: 0.
+     * 0: event detection disabled;
+     * 1: raise event flag on measured acceleration value beyond preset threshold
+     *
+     * YEFE:
+     * Event flag enable on Y event. Default value: 0.
+     * 0: Event detection disabled;
+     * 1: raise event flag on measured acceleration value beyond preset threshold
+     *
+     * XEFE:
+     * Event flag enable on X event. Default value: 0.
+     * 0: event detection disabled;
+     * 1: raise event flag on measured acceleration value beyond preset threshold
+     *
+     * OAE bit allows the selection between Motion (logical OR combination) and Freefall (logical AND combination) detection.
+     * ELE denotes whether the enabled event flag will to be latched in the FF_MT_SRC register or the event flag status
+     * in the FF_MT_SRC will indicate the real-time status of the event. If ELE bit is set to a logic ‘1’, then the event
+     * flags are frozen when the EA bit gets set, and are cleared by reading the FF_MT_SRC source register. ZHFE, YEFE, XEFE enable
+     * the detection of a motion or freefall event when the measured acceleration data on X, Y, Z channel is beyond the threshold
+     * set in FF_MT_THS register. If the ELE bit is set to logic ‘1’ in the FF_MT_CFG register new event flags are blocked from
+     * updating the FF_MT_SRC register. FF_MT_THS is the threshold register used to detect freefall motion events.
+     * The unsigned 7-bit FF_MT_THS threshold register holds the threshold for the freefall detection where the magnitude of the
+     * X and Y and Z acceleration values is lower or equal than the threshold value. Conversely, the FF_MT_THS also holds the
+     * threshold for the motion detection where the magnitude of the X or Y or Z acceleration value is higher than the threshold value.
+     *
+     * @param ele                       Event Latch Enable
+     * @param oae                       Motion detect / Freefall detect flag selection
+     * <pre>
+     * @param axis              0x00000111
+     *                                 |||_ enable on X
+     *                                 ||__ enable on Y
+     *                                 |___ enable on Z
+     * </pre>
+     */
+    void setMotionDetectionDetection(bool ele, bool oae, unsigned char axis);
+
+    /**
+     * The threshold resolution is 0.063g/LSB and the threshold register has a range of 0 to 127 counts.
+     * The maximum range is to 8g. Note that even when the full scale value is set to 2g or 4g the motion
+     * detects up to 8g. If the Low Noise bit is set in Register 0x2A then the maximum threshold will be
+     * limited to 4g regardless of the full scale range.
+     *
+     * When DBCNTM bit is a logic ‘1’, the debounce counter is cleared to 0 whenever the inertial event of
+     * interest is no longer true as shown in Figure 13, (b). While the DBCNTM bit is set to logic ‘0’ the
+     * debounce counter is decremented by 1 whenever the inertial event of interest is no longer true
+     * (Figure 13, (c)) until the debounce counter reaches 0 or the inertial event of interest becomes active.
+     *
+     * @param debounceCounterMode       Debounce counter mode selection. Default value: 0.
+     *                                  0: increments or decrements debounce;
+     *                                  1: increments or clears counter.
+     * @param threshold                 FF MD Threshold: Default value (0x7f mask will be applied)
+     */
+    void setMotionDetectionThreshold(bool debounceCounterMode, unsigned char threshold);
+
+    /**
+     * This register sets the number of debounce sample counts for the event trigger.
+     *
+     * This register sets the minimum number of debounce sample counts of continuously matching the detection
+     * condition user selected for the freefall, motion event. When the internal debounce counter reaches
+     * the FF_MT_COUNT value a Freefall/Motion event flag is set. The debounce counter will never increase beyond
+     * the FF_MT_COUNT value.
+     *
+     * NOTE: Time step used for the debounce sample count depends on the ODR chosen and the Oversampling mode as
+     * shown in Table 38.
+     *
+     * @param count                     The number of debounce sample counts.
+     */
+    void setMotionDetectionCount(unsigned char count);
 
     /**
      * Sets the Back/Front Trip Angle Threshold. 

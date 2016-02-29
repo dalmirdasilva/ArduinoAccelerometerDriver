@@ -64,7 +64,7 @@ void setup() {
     acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_CFG, AccelerometerMMA8451::FF_MT_CFG_XEFE, 0x08);
 
     // Step 3: Threshold Setting Value for the Motion detection of > 3g
-    // Note: The step count is 0.063g/ count
+    // Note: The step count is 0.063g/count
     // 3g/0.063g = 47.6; 
     // Round up to 48
     acc.configureRegisterBits(AccelerometerMMA8451::FF_MT_THS, AccelerometerMMA8451::FF_MT_THS_THS, 0x10);

@@ -89,6 +89,29 @@ void AccelerometerMMA8451::setTransientThreshold(bool debounceCounterMode, unsig
     writeRegister(TRANSIENT_THS, config.value);
 }
 
+void AccelerometerMMA8451::setTransientCount(unsigned char count) {
+    writeRegister(TRANSIENT_COUNT, count);
+}
+
+void AccelerometerMMA8451::setMotionDetectionDetection(bool ele, bool oae, unsigned char axis) {
+    FF_MT_CFGbits config = { 0 };
+    config.ELE = ele;
+    config.EFE = axis & FF_MT_CFG_EFE;
+    config.OAE = oae;
+    writeRegister(FF_MT_CFG, config.value);
+}
+
+void AccelerometerMMA8451::setMotionDetectionThreshold(bool debounceCounterMode, unsigned char threshold) {
+    FF_MT_THSbits config = { 0 };
+    config.THS = threshold & FF_MT_THS_THS;
+    config.DBCNTM = debounceCounterMode & 0x01;
+    writeRegister(FF_MT_THS, config.value);
+}
+
+void AccelerometerMMA8451::setMotionDetectionCount(unsigned char count) {
+    writeRegister(FF_MT_COUNT, count);
+}
+
 void AccelerometerMMA8451::setBackFrontTrip(BackFrontTrip trip) {
     configureRegisterBits(PL_BF_ZCOMP, PL_BF_ZCOMP_BKFR, (unsigned char) trip << 6);
 }
