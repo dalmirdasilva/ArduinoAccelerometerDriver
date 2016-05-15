@@ -16,7 +16,7 @@
 #include <Accelerometer.h>
 #include <RegisterBasedWiredDevice.h>
 
-#define MPU9250_ADDRESS 0x1c
+#define MPU9250_ADDRESS 0x68
 
 class AccelerometerMPU9250: public Accelerometer, public RegisterBasedWiredDevice {
 public:
@@ -214,9 +214,9 @@ public:
      */
     enum FullScaleRange {
         FS_SEL_2G = 0x00,
-        FS_SEL_4G = 0x01,
-        FS_SEL_8G = 0x02,
-        FS_SEL_16G = 0x03
+        FS_SEL_4G = 0x08,
+        FS_SEL_8G = 0x10,
+        FS_SEL_16G = 0x18
     };
 
     /**

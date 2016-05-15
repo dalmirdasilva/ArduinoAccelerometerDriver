@@ -93,7 +93,32 @@ void AccelerometerMMA8451::setTransientCount(unsigned char count) {
     writeRegister(TRANSIENT_COUNT, count);
 }
 
-void AccelerometerMMA8451::setMotionDetectionDetection(bool ele, bool oae, unsigned char axis) {
+void AccelerometerMMA8451::setOrientationDetection(bool enable, bool debounceCounterMode) {
+    PL_CFGbits config = {0};
+    config.PL_EN = enable;
+    config.DBCNTM = debounceCounterMode;
+    writeRegister(PL_CFG, config.value);
+}
+
+void AccelerometerMMA8451::setOrientationDebounceCounter(unsigned char debounceCounter) {
+    writeRegister(PL_COUNT, debounceCounter);
+}
+
+void AccelerometerMMA8451::setOrientationBackFrontCompensation(unsigned char tripAngleThreshold, unsigned char zLockAngle) {
+    PL_BF_ZCOMPbits config = {0};
+    config.BKFR = tripAngleThreshold;
+    config.ZLOCK = zLockAngle;
+    writeRegister(PL_BF_ZCOMP, config.value);
+}
+
+void AccelerometerMMA8451::setOrientationThresholdAndHysteresis(unsigned char threshold, unsigned char hysteresis) {
+    P_L_THS_REGbits config = {0};
+    config.P_L_THS = threshold;
+    config.HYS = hysteresis;
+    writeRegister(P_L_THS_REG, config.value);
+}
+
+void AccelerometerMMA8451::setMotionDetection(bool ele, bool oae, unsigned char axis) {
     FF_MT_CFGbits config = { 0 };
     config.ELE = ele;
     config.EFE = axis & FF_MT_CFG_EFE;
@@ -215,11 +240,8 @@ float AccelerometerMMA8451::convertToG(unsigned char* buf, bool fastRead) {
         float counts[] = { 64.0, 32.0, 16.0 };
         g = ((char) buf[0]) / counts[xyzDataCfg.FS];
     } else {
-        int aux = 0;
         float counts[] = { 16384.0, 8192.0, 4096.0 };
-        aux = buf[0];
-        aux <<= 8;
-        aux |= buf[1];
+        int aux = (buf[0] << 8) | buf[1];
         g = aux / counts[xyzDataCfg.FS];
     }
     return g;

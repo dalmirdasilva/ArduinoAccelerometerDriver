@@ -7,7 +7,9 @@ AccelerometerMPU9250::AccelerometerMPU9250(bool ad0)
 
 float AccelerometerMPU9250::readAxisGravity(unsigned char axisRegister) {
     unsigned char buf[2];
-    readRegisterBlock(axisRegister, buf, 2);
+    if (readRegisterBlock(axisRegister, buf, 2) != 2) {
+        return 0.0;
+    }
     return convertToG(buf);
 }
 
@@ -29,7 +31,7 @@ void AccelerometerMPU9250::readXYZ(unsigned char* buf) {
 
 void AccelerometerMPU9250::setFullScaleRange(FullScaleRange fsr) {
     configureRegisterBits(ACCEL_CONFIG, ACCEL_CONFIG_ACCEL_FS_SEL, (unsigned char) fsr);
-    config.ACCEL_FS_SEL = fsr;
+    config.ACCEL_FS_SEL = fsr >> 3;
 }
 
 void AccelerometerMPU9250::setLowPassFilter(bool enable, LowPassFilter lpf) {
@@ -63,11 +65,11 @@ void AccelerometerMPU9250::enableCycle(bool enable) {
 }
 
 void AccelerometerMPU9250::reset() {
-    configureRegisterBits(PWR_MGMT_1, PWR_MGMT_1_H_RESET, 0x01);
+    configureRegisterBits(PWR_MGMT_1, PWR_MGMT_1_H_RESET, 0xff);
 }
 
 void AccelerometerMPU9250::sleep() {
-    configureRegisterBits(PWR_MGMT_1, PWR_MGMT_1_SLEEP, 0x01);
+    configureRegisterBits(PWR_MGMT_1, PWR_MGMT_1_SLEEP, 0xff);
 }
 
 void AccelerometerMPU9250::awake() {
@@ -87,7 +89,7 @@ void AccelerometerMPU9250::disableInterrupt(Interrupt interrupt) {
 }
 
 float AccelerometerMPU9250::convertToG(unsigned char buf[2]) {
-    int* raw = (int*) &buf;
+    int raw = (buf[0] << 8) | buf[1];
     float counts[] = { 16384.0, 8192.0, 4096.0, 2048.0 };
-    return *raw / counts[config.ACCEL_FS_SEL];
+    return raw / counts[config.ACCEL_FS_SEL];
 }

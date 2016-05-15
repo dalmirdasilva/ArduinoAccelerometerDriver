@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <Wire.h>
 #include <WiredDevice.h>
 #include <RegisterBasedWiredDevice.h>
@@ -5,6 +6,7 @@
 #include <AccelerometerMPU9250.h>
 
 AccelerometerMPU9250 acc(0);
+unsigned char buf[6];
 
 void setup() {
     Serial.begin(9600);
@@ -12,12 +14,11 @@ void setup() {
 }
 
 void loop() {
-    Serial.print("x: ");
-    Serial.println(acc.readXg());
-    Serial.print("y: ");
-    Serial.println(acc.readYg());
-    Serial.print("z: ");
-    Serial.println(acc.readZg());
-    Serial.println("-----------");
-    delay(1000);
+    acc.readXYZ(buf);
+    Serial.write(0xaa);
+    Serial.write(buf, 6);
+    Serial.write(0x00);
+    unsigned long now = millis();
+    Serial.write((unsigned char *) &now, 4);
+    Serial.write(0xbb);
 }

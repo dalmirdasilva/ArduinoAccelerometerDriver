@@ -1235,6 +1235,78 @@ public:
     void setTransientCount(unsigned char count);
 
     /**
+     * The MMA8451Q Orientation Detection algorithm confirms the reliability of the function with a configurable Z-lockout angle.
+     * Based on known functionality of linear accelerometers, it is not possible to rotate the device about the Z-axis to detect change in
+     * acceleration at slow angular speeds. The angle at which the device no longer detects the orientation change is referred to as the
+     * "Z-Lockout angle". The device operates down to 14° from the flat position.
+     *
+     * 0x11: Portrait/Landscape Configuration Register
+     *
+     * This register enables the Portrait/Landscape function and sets the behavior of the debounce counter.
+     *
+     * DBCNTM:
+     * Debounce counter mode selection. Default value: 1
+     *  0: Decrements debounce whenever condition of interest is no longer valid.
+     *  1: Clears counter whenever condition of interest is no longer valid.
+     *
+     * PL_EN:
+     * Portrait/Landscape Detection Enable. Default value: 0
+     *  0: Portrait/Landscape Detection is Disabled.
+     *  1: Portrait/Landscape Detection is Enabled.
+     *
+     * @param enable                Portrait/Landscape Detection Enable. Default value: 0
+     *                                  0: Portrait/Landscape Detection is Disabled.
+     *                                  1: Portrait/Landscape Detection is Enabled.
+     * @param debounceCounterMode   Debounce counter mode selection. Default value: 1
+     *                                  0: Decrements debounce whenever condition of interest is no longer valid.
+     *                                  1: Clears counter whenever condition of interest is no longer valid.
+     */
+    void setOrientationDetection(bool enable, bool debounceCounterMode);
+
+    /**
+     * Portrait/Landscape Debounce Counter
+     *
+     * This register sets the debounce count for the orientation state transition. The minimum debounce latency is determined by the
+     * data rate set by the product of the selected system ODR and PL_COUNT registers. Any transition from WAKE to SLEEP or vice
+     * versa resets the internal Landscape/Portrait debounce counter. Note: The debounce counter weighting (time step) changes
+     * based on the ODR and the Oversampling mode. Table 27 explains the time step value for all sample rates and all Oversampling
+     * modes.
+     *
+     * @param counter Portrait/Landscape Debounce Counter value.
+     */
+    void setOrientationDebounceCounter(unsigned char debounceCounter);
+
+    /**
+     * PL_BF_ZCOMP Back/Front and Z Compensation Register
+     *
+     * The Z-Lock angle compensation bits allow the user to adjust the Z-lockout region from 14° up to 43°. The default Z-lockout angle
+     * is set to the default value of 29° upon power up. The Back to Front trip angle is set by default to ±75° but this angle also can be
+     * adjusted from a range of 65° to 80° with 5° step increments.
+     *
+     * @param tripAngleThreshold        Back/Front Trip Angle Threshold. Default: 01 ≥ ±75°.
+     *                                  Step size is 5°. Range: ±(65° to 80°).
+     * @param zLockAngle                Z-Lock Angle Threshold. Range is from 14° to 43°.
+     *                                  Step size is 4°. Default value: 100 ≥ 29°. Maximum value: 111 ≥ 43°.
+     */
+    void setOrientationBackFrontCompensation(unsigned char tripAngleThreshold, unsigned char zLockAngle);
+
+    /**
+     * PL_THS_REG Portrait/Landscape Threshold and Hysteresis Register
+     *
+     * PL_THS[4] PL_THS[3] PL_THS[2] PL_THS[1] PL_THS[0] HYS[2] HYS[1] HYS[0]
+     *
+     * This register represents the Portrait to Landscape trip threshold register used to set the trip angle for transitioning from Portrait
+     * to Landscape and Landscape to Portrait. This register includes a value for the hysteresis.
+     *
+     * @param threshold             Portrait/Landscape trip threshold angle from 15° to 75°.
+     *                              See Table 32 for the values with the corresponding approximate threshold angle.
+     *                              Default value: 1_0000 (45°).
+     * @param hysteresis            This angle is added to the threshold angle for a smoother transition from Portrait
+     *                              to Landscape and Landscape to Portrait. This angle ranges from 0° to ±24°. The default is 100 (±14°).
+     */
+    void setOrientationThresholdAndHysteresis(unsigned char threshold, unsigned char hysteresis);
+
+    /**
      * This is the Freefall/Motion configuration register for setting up the conditions of the freefall or motion function.
      *
      * ELE:
@@ -1283,7 +1355,7 @@ public:
      *                                 |___ enable on Z
      * </pre>
      */
-    void setMotionDetectionDetection(bool ele, bool oae, unsigned char axis);
+    void setMotionDetection(bool ele, bool oae, unsigned char axis);
 
     /**
      * The threshold resolution is 0.063g/LSB and the threshold register has a range of 0 to 127 counts.
