@@ -13,4 +13,7 @@
 
 #include "Accelerometer.h"
 
+Accelerometer::~Accelerometer() {
+}
+
 #endif /* __ARDUINO_DRIVER_ACCELEROMETER_CPP__ */

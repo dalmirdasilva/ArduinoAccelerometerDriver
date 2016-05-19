@@ -18,6 +18,17 @@
 
 #define MPU9250_ADDRESS 0x68
 
+/**
+ * 2.2 Accelerometer Features
+ * The triple-axis MEMS accelerometer in MPU-9250 includes a wide range of features:
+ * • DDigital-output triple-axis accelerometer with a programmable full scale range of ±2g, ±4g, ±8g and ±16g and integrated 16-bit ADCs
+ * • Accelerometer normal operating current: 450μA
+ * • Low power accelerometer mode current: 8.4μA at 0.98Hz, 19.8μA at 31.25Hz
+ * • Sleep mode current: 8μA
+ * • User-programmable interrupts
+ * • Wake-on-motion interrupt for low power operation of applications processor
+ * • Self-test
+ */
 class AccelerometerMPU9250: public Accelerometer, public RegisterBasedWiredDevice {
 public:
 
@@ -338,21 +349,21 @@ public:
     /**
      * Reads the x axis from the accelerometer device.
      *
-     * @retun   The x result.
+     * @return   The x result.
      */
     float readXg();
 
     /**
      * Reads the y axis from the accelerometer device.
      *
-     * @retun   The y result.
+     * @return   The y result.
      */
     float readYg();
 
     /**
      * Reads the z axis from the accelerometer device.
      *
-     * @retun   The z result.
+     * @return   The z result.
      */
     float readZg();
 

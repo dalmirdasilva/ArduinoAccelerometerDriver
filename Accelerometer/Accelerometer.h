@@ -22,6 +22,8 @@ class Accelerometer {
 
 public:
 
+    virtual ~Accelerometer();
+
     /**
      * Reads the x axis from the accelerometer device.
      * 
