@@ -1,10 +1,10 @@
 /**
  * Arduino - Accelerometer driver
- * 
+ *
  * AccelerometerMMA8451.cpp
- * 
+ *
  * The implementation of the MMA8451 accelerometer.
- * 
+ *
  * @author Dalmir da Silva <dalmirdasilva@gmail.com>
  */
 
@@ -91,6 +91,34 @@ void AccelerometerMMA8451::setTransientThreshold(bool debounceCounterMode, unsig
 
 void AccelerometerMMA8451::setTransientCount(unsigned char count) {
     writeRegister(TRANSIENT_COUNT, count);
+}
+
+void AccelerometerMMA8451::setPulseDetection(bool enable, unsigned char axis, bool dpa) {
+    PULSE_CFGbits config = { 0 };
+
+    config.ELE = enable;
+    config.PEFE = axis & PULSE_CFG_PEFE;
+    config.DPA = dpa;
+
+    writeRegister(PULSE_CFG, config.value);
+}
+
+void AccelerometerMMA8451::setPulseThreshold(unsigned char thresholdX, unsigned char thresholdY, unsigned char thresholdZ) {
+    writeRegister(PULSE_THSX, PULSE_THS_THS & thresholdX);
+    writeRegister(PULSE_THSY, PULSE_THS_THS & thresholdY);
+    writeRegister(PULSE_THSZ, PULSE_THS_THS & thresholdZ);
+}
+
+void AccelerometerMMA8451::setPulseFirstTimer(unsigned char timer) {
+    writeRegister(PULSE_TMLT, timer);
+}
+
+void AccelerometerMMA8451::setPulseLatency(unsigned char latency) {
+    writeRegister(PULSE_LTCY, latency);
+}
+
+void AccelerometerMMA8451::setPulseSecondWindow(unsigned char window) {
+    writeRegister(PULSE_WIND, window);
 }
 
 void AccelerometerMMA8451::setOrientationDetection(bool enable, bool debounceCounterMode) {

@@ -1,10 +1,10 @@
 /**
  * Arduino - Accelerometer driver
- * 
+ *
  * AccelerometerMMA8451.h
- * 
+ *
  * The implementation of the MMA8451 accelerometer.
- * 
+ *
  * @author Dalmir da Silva <dalmirdasilva@gmail.com>
  */
 
@@ -56,7 +56,7 @@ public:
 
     /**
      * FIFO Setup Register
-     * 
+     *
      * 0x09 F_SETUP: FIFO Setup Register (Read/Write)
      */
     union F_SETUPbits {
@@ -86,7 +86,7 @@ public:
 
     /**
      * System Mode Register
-     * 
+     *
      * 0x0B SYSMOD: System Mode Register (Read Only)
      */
     union SYSMODbits {
@@ -101,7 +101,7 @@ public:
 
     /**
      * System Interrupt Status Register
-     * 
+     *
      * 0x0C: INT_SOURCE System Interrupt Status Register
      */
     union INT_SOURCEbits {
@@ -135,7 +135,7 @@ public:
 
     /**
      * High Pass Filter Register
-     * 
+     *
      * 0x0F HP_FILTER_CUTOFF: High Pass Filter Register (Read/Write)
      */
     union HP_FILTER_CUTOFFbits {
@@ -152,7 +152,7 @@ public:
 
     /**
      * Portrait/Landscape Status Register
-     * 
+     *
      * 0x10 PL_STATUS Register (Read Only)
      */
     union PL_STATUSbits {
@@ -169,7 +169,7 @@ public:
 
     /**
      * Portrait/Landscape Configuration Register
-     * 
+     *
      * 0x11 PL_CFG Register (Read/Write)
      */
     union PL_CFGbits {
@@ -184,7 +184,7 @@ public:
 
     /**
      * Back/Front and Z Compensation Register
-     * 
+     *
      * 0x13: PL_BF_ZCOMP Register (Read/Write)
      */
     union PL_BF_ZCOMPbits {
@@ -199,7 +199,7 @@ public:
 
     /**
      * Portrait/Landscape Threshold and Hysteresis Register
-     * 
+     *
      * 0x14: P_L_THS_REG Register (Read/Write)
      */
     union P_L_THS_REGbits {
@@ -213,7 +213,7 @@ public:
 
     /**
      * Freefall/Motion Configuration Register
-     * 
+     *
      * 0x15 FF_MT_CFG Register (Read/Write)
      */
     union FF_MT_CFGbits {
@@ -236,7 +236,7 @@ public:
 
     /**
      * Freefall/Motion Source Register
-     * 
+     *
      * 0x16: FF_MT_SRC Freefall and Motion Source Register (Read Only)
      */
     union FF_MT_SRCbits {
@@ -256,7 +256,7 @@ public:
 
     /**
      * Freefall and Motion Threshold Register
-     * 
+     *
      * 0x17 FF_MT_THS Register (Read/Write)
      */
     union FF_MT_THSbits {
@@ -270,7 +270,7 @@ public:
 
     /**
      * Transient Config Register
-     * 
+     *
      * 0x1D TRANSIENT_CFG Register (Read/Write)
      */
     union TRANSIENT_CFGbits {
@@ -294,7 +294,7 @@ public:
 
     /**
      * Transient Source Register
-     * 
+     *
      * 0x1E TRANSIENT_SRC Register (Read Only)
      */
     union TRANSIENT_SRCbits {
@@ -314,7 +314,7 @@ public:
 
     /**
      * Transient Threshold Register
-     * 
+     *
      * 0x1F TRANSIENT_THS Register (Read/Write)
      */
     union TRANSIENT_THSbits {
@@ -328,7 +328,7 @@ public:
 
     /**
      * Pulse Configuration Register
-     * 
+     *
      * 0x21 PULSE_CFG Register (Read/Write)
      */
     union PULSE_CFGbits {
@@ -343,12 +343,16 @@ public:
             unsigned char ELE :1;
             unsigned char DPA :1;
         };
+        struct {
+            unsigned char PEFE :6;
+            unsigned char :2;
+        };
         unsigned char value;
     };
 
     /**
      * Pulse Source Register
-     * 
+     *
      * 0x22 PULSE_SRC Register (Read Only)
      */
     union PULSE_SRCbits {
@@ -368,7 +372,7 @@ public:
 
     /**
      * System Control 1 Register
-     * 
+     *
      * 0x2A CTRL_REG1 Register (Read/Write)
      */
     union CTRL_REG1bits {
@@ -385,7 +389,7 @@ public:
 
     /**
      * System Control 2 Register
-     * 
+     *
      * 0x2B CTRL_REG2 Register (Read/Write)
      */
     union CTRL_REG2bits {
@@ -403,7 +407,7 @@ public:
 
     /**
      * Interrupt Control Register
-     * 
+     *
      * 0x2C CTRL_REG3 Register (Read/Write)
      */
     union CTRL_REG3bits {
@@ -423,7 +427,7 @@ public:
 
     /**
      * Interrupt Enable Register
-     * 
+     *
      * 0x2D CTRL_REG4 Register (Read/Write)
      */
     union CTRL_REG4bits {
@@ -443,7 +447,7 @@ public:
 
     /**
      * Interrupt Configuration Register
-     * 
+     *
      * 0x2E: CTRL_REG5 Interrupt Configuration Register
      */
     union CTRL_REG5bits {
@@ -614,6 +618,7 @@ public:
         PULSE_CFG_ZDPEFE = 0x20,
         PULSE_CFG_ELE = 0x40,
         PULSE_CFG_DPA = 0x80,
+        PULSE_CFG_PEFE = 0x3f,
 
         PULSE_SRC_POLX = 0x01,
         PULSE_SRC_POLY = 0x02,
@@ -623,6 +628,8 @@ public:
         PULSE_SRC_AXY = 0x20,
         PULSE_SRC_AXZ = 0x40,
         PULSE_SRC_EA = 0x80,
+
+        PULSE_THS_THS = 0x7f,
 
         CTRL_REG1_ACTIVE = 0x01,
         CTRL_REG1_F_READ = 0x02,
@@ -672,7 +679,7 @@ public:
     /**
      * Dynamic range.
      * Table 3.Full Scale Selection
-     * 
+     *
      * <pre>
      * FS1 FS0  g Range
      * 0    0   +/-2g
@@ -689,7 +696,7 @@ public:
 
     /**
      * Table 5. Output Data Rates
-     * 
+     *
      * <pre>
      * DR2  DR1 DR0 Output      Data Rate (ODR) Time Between Data Samples
      * 0    0   0   800 Hz      1.25 ms
@@ -714,11 +721,11 @@ public:
     };
 
     /**
-     * It is important to note that when the device is Auto-SLEEP mode, 
-     * the system ODR and the data rate for all the system functional 
-     * blocks are overridden by the data rate set by the ASLP_RATE 
+     * It is important to note that when the device is Auto-SLEEP mode,
+     * the system ODR and the data rate for all the system functional
+     * blocks are overridden by the data rate set by the ASLP_RATE
      * field.
-     * 
+     *
      * <pre>
      * ASLP_RATE1   ASLP_RATE0  Frequency (Hz)
      * 0            0           50
@@ -735,9 +742,9 @@ public:
 
     /**
      * Oversampling Mode.
-     * 
+     *
      * <pre>
-     * MODS1    MODS0 
+     * MODS1    MODS0
      * 0        0       Normal
      * 0        1       Low noise, low power
      * 1        0       High resolution
@@ -763,26 +770,26 @@ public:
 
     /**
      * FIFO buffer overflow mode
-     * 
+     *
      * FIFO buffer overflow mode. Default value: 0.
      * 00: FIFO is disabled.
-     * 01: FIFO contains the most recent samples when overflowed 
+     * 01: FIFO contains the most recent samples when overflowed
      *      (circular buffer). Oldest sample is discarded to be replaced
      *      by new sample.
      * 10: FIFO stops accepting new samples when overflowed.
-     * 11: Trigger mode. The FIFO will be in a circular mode up to the 
-     *      number of samples in the watermark. The FIFO will be in a 
-     *      circular mode until the trigger event occurs after that the 
+     * 11: Trigger mode. The FIFO will be in a circular mode up to the
+     *      number of samples in the watermark. The FIFO will be in a
+     *      circular mode until the trigger event occurs after that the
      *      FIFO will continue to accept samples for 32-WMRK samples and
-     *      then stop receiving further samples. This allows data to be 
-     *      collected both before and after the trigger event and it is 
-     *      definable by the watermark setting. The FIFO is flushed 
-     *      whenever the FIFO is disabled, during an automatic ODR 
+     *      then stop receiving further samples. This allows data to be
+     *      collected both before and after the trigger event and it is
+     *      definable by the watermark setting. The FIFO is flushed
+     *      whenever the FIFO is disabled, during an automatic ODR
      *      change (Auto-WAKE/SLEEP), or transitioning from STANDBY mode
-     *      to ACTIVE mode. Disabling the FIFO (F_MODE = 00) resets the 
-     *      F_OVF, F_WMRK_FLAG, F_CNT to zero. A FIFO overflow event 
-     *      (i.e., F_CNT = 32) will assert the F_OVF flag and a FIFO 
-     *      sample count equal to the sample count watermark (i.e., 
+     *      to ACTIVE mode. Disabling the FIFO (F_MODE = 00) resets the
+     *      F_OVF, F_WMRK_FLAG, F_CNT to zero. A FIFO overflow event
+     *      (i.e., F_CNT = 32) will assert the F_OVF flag and a FIFO
+     *      sample count equal to the sample count watermark (i.e.,
      *      F_WMRK) asserts the F_WMRK_FLAG event flag.
      */
     enum FifoBufferOverflowMode {
@@ -793,7 +800,7 @@ public:
     };
 
     /**
-     * Fast Read mode: Data format limited to single Byte Default 
+     * Fast Read mode: Data format limited to single Byte Default
      * value: 0.
      * (0: Normal mode 1: Fast Read Mode)
      */
@@ -804,12 +811,12 @@ public:
 
     /**
      * Trigger bits.
-     * 
+     *
      * <pre>
      * INT_SOURCE   Description
-     * 
+     *
      * Trig_TRANS   Transient interrupt trigger bit. Default value: 0
-     * Trig_LNDPRT  Landscape/Portrait Orientation interrupt trigger 
+     * Trig_LNDPRT  Landscape/Portrait Orientation interrupt trigger
      *              bit. Default value: 0
      * Trig_PULSE   Pulse interrupt trigger bit. Default value: 0
      * Trig_FF_MT   Freefall/Motion trigger bit. Default value: 0
@@ -823,8 +830,8 @@ public:
     };
 
     /**
-     * Back/Front Trip Angle Threshold. Default: 01 >= +/-75º. 
-     * Step size is 5º. 
+     * Back/Front Trip Angle Threshold. Default: 01 >= +/-75º.
+     * Step size is 5º.
      * Range: +/-(65º to 80º).
      */
     enum BackFrontTrip {
@@ -835,9 +842,9 @@ public:
     };
 
     /**
-     * Z-Lock Angle Threshold. Range is from 14º to 43º. 
+     * Z-Lock Angle Threshold. Range is from 14º to 43º.
      * Step size is 4º.
-     * Default value: 100 >= 29º. 
+     * Default value: 100 >= 29º.
      * Maximum value: 111 >= 43º.
      */
     enum ZLockThresholdAngle {
@@ -866,7 +873,7 @@ public:
 
     /**
      * Trip Angles with Hysteresis for 45º Angle
-     * 
+     *
      * <pre>
      * Hysteresis       Hysteresis      Landscape to Portrait   Portrait to Landscape
      * Register Value   +/- Angle Range   Trip Angle              Trip Angle
@@ -893,59 +900,59 @@ public:
 
     /**
      * INT_EN_ASLP
-     * 0: Auto-SLEEP/WAKE interrupt disabled; 
+     * 0: Auto-SLEEP/WAKE interrupt disabled;
      * 1: Auto-SLEEP/WAKE interrupt enabled.
-     * 
+     *
      * INT_EN_FIFO
-     * 0: FIFO interrupt disabled; 
+     * 0: FIFO interrupt disabled;
      * 1: FIFO interrupt enabled.
-     * 
+     *
      * INT_EN_TRANS
-     * 0: Transient interrupt disabled; 
+     * 0: Transient interrupt disabled;
      * 1: Transient interrupt enabled.
-     * 
+     *
      * INT_EN_LNDPRT
      * 0: Orientation (Landscape/Portrait) interrupt disabled.
      * 1: Orientation (Landscape/Portrait) interrupt enabled.
-     * 
-     * INT_EN_PULSE 
-     * 0: Pulse Detection interrupt disabled; 
+     *
+     * INT_EN_PULSE
+     * 0: Pulse Detection interrupt disabled;
      * 1: Pulse Detection interrupt enabled
-     * 
-     * INT_EN_FF_MT 
+     *
+     * INT_EN_FF_MT
      * 0: Freefall/Motion interrupt disabled;
      * 1: Freefall/Motion interrupt enabled
-     * 
-     * INT_EN_DRDY 
-     * 0: Data Ready interrupt disabled; 
+     *
+     * INT_EN_DRDY
+     * 0: Data Ready interrupt disabled;
      * 1: Data Ready interrupt enabled
-     * 
+     *
      * INT_CFG_ASLP
      * 0: Interrupt is routed to INT2 pin;
      * 1: Interrupt is routed to INT1 pin
-     * 
+     *
      * INT_CFG_FIFO
-     * 0: Interrupt is routed to INT2 pin; 
+     * 0: Interrupt is routed to INT2 pin;
      * 1: Interrupt is routed to INT1 pin
-     * 
+     *
      * INT_CFG_TRANS
-     * 0: Interrupt is routed to INT2 pin; 
+     * 0: Interrupt is routed to INT2 pin;
      * 1: Interrupt is routed to INT1 pin
-     * 
+     *
      * INT_CFG_LNDPRT
-     * 0: Interrupt is routed to INT2 pin; 
+     * 0: Interrupt is routed to INT2 pin;
      * 1: Interrupt is routed to INT1 pin
-     * 
-     * INT_CFG_PULSE 
-     * 0: Interrupt is routed to INT2 pin; 
+     *
+     * INT_CFG_PULSE
+     * 0: Interrupt is routed to INT2 pin;
      * 1: Interrupt is routed to INT1 pin
-     * 
-     * INT_CFG_FF_MT 
-     * 0: Interrupt is routed to INT2 pin; 
+     *
+     * INT_CFG_FF_MT
+     * 0: Interrupt is routed to INT2 pin;
      * 1: Interrupt is routed to INT1 pin
-     * 
-     * INT_CFG_DRDY 
-     * 0: Interrupt is routed to INT2 pin; 
+     *
+     * INT_CFG_DRDY
+     * 0: Interrupt is routed to INT2 pin;
      * 1: Interrupt is routed to INT1 pin
      */
     enum Interrupt {
@@ -968,7 +975,7 @@ public:
     };
 
     /**
-     * Push-Pull/Open Drain selection on interrupt pad. 
+     * Push-Pull/Open Drain selection on interrupt pad.
      * Default value: 0.
      * 0: Push-Pull; 1: Open Drain
      */
@@ -1019,74 +1026,74 @@ public:
 
     /**
      * Public constructor.
-     * 
+     *
      * @param sa0       The LSBit of the address.
      */
     AccelerometerMMA8451(bool sa0);
 
     /**
      * Reads the x axis from the accelerometer device.
-     * 
+     *
      * @retun   The x result.
      */
     virtual float readXg();
 
     /**
      * Reads the y axis from the accelerometer device.
-     * 
+     *
      * @retun   The y result.
      */
     virtual float readYg();
 
     /**
      * Reads the z axis from the accelerometer device.
-     * 
+     *
      * @retun   The z result.
      */
     virtual float readZg();
 
     /**
-     * The MMA8451Q has 14-bit XYZ data. The MMA8452Q has 12-bit XYZ data and 
-     * the MMA8453 has 10-bit data. This section is an overview of how to 
-     * manipulate the data to continuously burst out 14-bit data in different 
+     * The MMA8451Q has 14-bit XYZ data. The MMA8452Q has 12-bit XYZ data and
+     * the MMA8453 has 10-bit data. This section is an overview of how to
+     * manipulate the data to continuously burst out 14-bit data in different
      * data formats from the MCU. The examples will be shown for the 14-bit data
-     * but the reader can understand what changes would be made for the 12-bit 
-     * data or the 10-bit data. The driver code has all the functions for all 
-     * data formats available. The event flag can be monitored by reading the 
-     * STATUS register (0x00). This can be done by using either a polling or 
-     * interrupt technique, which is discussed later in Section 9.0 of this 
-     * document. It is not absolutely necessary to read the STATUS register to 
-     * clear it. Reading the data clears the STATUS register. Table 9. 0x00 
-     * STATUS: Data Status Registers (Read Only) 
+     * but the reader can understand what changes would be made for the 12-bit
+     * data or the 10-bit data. The driver code has all the functions for all
+     * data formats available. The event flag can be monitored by reading the
+     * STATUS register (0x00). This can be done by using either a polling or
+     * interrupt technique, which is discussed later in Section 9.0 of this
+     * document. It is not absolutely necessary to read the STATUS register to
+     * clear it. Reading the data clears the STATUS register. Table 9. 0x00
+     * STATUS: Data Status Registers (Read Only)
      * Bit 7 Bit 6 Bit 5 Bit 4 Bit 3 Bit 2 Bit 1 Bit 0
      * ZYXOW ZOW YOW XOW ZYXDR ZDR YDR XDR
-     * The ZYXDR flag is set whenever there is new data available in any axis. 
-     * The following code example monitors this flag and, upon the detection of 
-     * new data, reads the 14/12/10-bit XYZ data into an array (value[]) in RAM 
-     * with a single, multi-byte I2C access. These values are then copied into 
+     * The ZYXDR flag is set whenever there is new data available in any axis.
+     * The following code example monitors this flag and, upon the detection of
+     * new data, reads the 14/12/10-bit XYZ data into an array (value[]) in RAM
+     * with a single, multi-byte I2C access. These values are then copied into
      * 16-bit variables prior to further processing.
      */
     void readXYZ(unsigned char buf[6]);
 
     /**
      * Return true if the data is ready to be read.
-     * 
-     * @return 
+     *
+     * @return
      */
     bool isDataReady();
 
     /**
      * Device activation.
-     * 
+     *
      * Activate or deactivate the device.
-     * 
+     *
      * @param activation
      */
     void deviceActivation(DeviceActivation activation);
 
     /**
      * Put sensor into Standby Mode
-     * 
+     *
      * Read current value of System Control 1 Register.
      * Put sensor into Standby Mode by clearing the Active bit
      * Return with previous value of System Control 1 Register.
@@ -1097,7 +1104,7 @@ public:
 
     /**
      * Put sensor into Active Mode
-     * 
+     *
      * Read current value of System Control 1 Register.
      * Put sensor into Active Mode by setting the Active bit
      * Return with previous value of System Control 1 Register.
@@ -1108,15 +1115,15 @@ public:
 
     /**
      * Set sensor to work in Ng range by changing the FS1 and the FS0.
-     * 
+     *
      * There are 3 different dynamic ranges that can be set (2g, 4g, 8g).
-     * The dynamic range is changeable only in the Standby Mode. The dynamic 
-     * range is controlled by setting the FS0 and FS1 bits in register 0x0E. 
-     * The device changes from Standby to Active Mode via bit 0 in register 
+     * The dynamic range is changeable only in the Standby Mode. The dynamic
+     * range is controlled by setting the FS0 and FS1 bits in register 0x0E.
+     * The device changes from Standby to Active Mode via bit 0 in register
      * 0x2A.
-     * 
+     *
      * Table 3. Full Scale Selection
-     * 
+     *
      * <pre>
      * FS1  FS0 g Range
      * 0    0   +/-2g
@@ -1129,25 +1136,25 @@ public:
 
     /**
      * Sets the Output Data Rate.
-     * 
-     * The active mode Output Data Rate (ODR) and Sleep Mode Data Rate are 
-     * programmable via other control bits in the CTRL_REG1 register, seen in 
-     * Table 4. Unless the sleep mode is enabled the active mode data rate is 
-     * the data rate that will always be enabled. Table 5 shows how the DR2:DR0 
-     * bits affect the ODR. These are the active mode data rates available. The 
+     *
+     * The active mode Output Data Rate (ODR) and Sleep Mode Data Rate are
+     * programmable via other control bits in the CTRL_REG1 register, seen in
+     * Table 4. Unless the sleep mode is enabled the active mode data rate is
+     * the data rate that will always be enabled. Table 5 shows how the DR2:DR0
+     * bits affect the ODR. These are the active mode data rates available. The
      * default data rate is DR = 000, 800 Hz.
-     * 
+     *
      * @param rate              The Output Data Rate.
      */
     void setOutputDataRate(OutputDataRate rate);
 
     /**
      * Portrait/Landscape Detection Enable
-     * 
+     *
      * Default value: 0
      * 0: Portrait/Landscape Detection is Disabled.
      * 1: Portrait/Landscape Detection is Enabled.
-     * 
+     *
      * @param enable            The enable flag.
      */
     void setPortraitLandscapeDetection(bool enable);
@@ -1233,6 +1240,16 @@ public:
      * @param count                     The number of debounce sample counts.
      */
     void setTransientCount(unsigned char count);
+
+    void AccelerometerMMA8451::setPulseDetection(bool enable, unsigned char axis, bool dpa);
+
+    void AccelerometerMMA8451::setPulseThreshold(unsigned char thresholdX, unsigned char thresholdY, unsigned char thresholdZ);
+
+    void AccelerometerMMA8451::setPulseFirstTimer(unsigned char timer);
+
+    void AccelerometerMMA8451::setPulseLatency(unsigned char latency);
+
+    void AccelerometerMMA8451::setPulseSecondWindow(unsigned char window);
 
     /**
      * The MMA8451Q Orientation Detection algorithm confirms the reliability of the function with a configurable Z-lockout angle.
@@ -1391,61 +1408,61 @@ public:
     void setMotionDetectionCount(unsigned char count);
 
     /**
-     * Sets the Back/Front Trip Angle Threshold. 
-     * 
-     * Default: 01 >= +/-75º. 
+     * Sets the Back/Front Trip Angle Threshold.
+     *
+     * Default: 01 >= +/-75º.
      * Step size is 5º.
      * Range: +/-(65º to 80º).
-     * 
+     *
      * @param trip              The trip.
      */
     void setBackFrontTrip(BackFrontTrip trip);
 
     /**
-     * Sets the Z-Lock Angle Threshold. 
-     * 
-     * Range is from 14º to 43º. 
+     * Sets the Z-Lock Angle Threshold.
+     *
+     * Range is from 14º to 43º.
      * Step size is 4º.
-     * Default value: 100 >= 29º. 
+     * Default value: 100 >= 29º.
      * Maximum value: 111 >= 43º.
-     * 
+     *
      * @param angle             The angle.
      */
     void setZLockThresholdAngle(ZLockThresholdAngle angle);
 
     /**
      * Sets Portrait/Landscape trip threshold angle from 15º to 75º.
-     * 
-     * See Table 31 for the values with the corresponding approximate 
+     *
+     * See Table 31 for the values with the corresponding approximate
      * threshold angle. Default value: 1_0000 (45º).
-     * 
+     *
      * @param angle             The angle.
      */
     void setPortraitLandscapeThresholdAngle(PortraitLandscapeThresholdAngle angle);
 
     /**
      * Sets the Hysteresis Angle.
-     * 
-     * This angle is added to the threshold angle for a smoother 
+     *
+     * This angle is added to the threshold angle for a smoother
      * transition from Portrait to Landscape and Landscape to Portrait.
      * This angle ranges from 0º to +/-24º. The default is 100 (+/-14º).
-     * 
+     *
      * @param angle             The angle.
      */
     void setHysteresisAngle(HysteresisAngle angle);
 
     /**
      * Enables some interrupt.
-     * 
+     *
      * NOTE: The interrupt will be routed to the default pin.
-     * 
+     *
      * @param interrupt         The interrupt flag.
      */
     void enableInterrupt(Interrupt interrupt);
 
     /**
      * Enables some interrupt, and route to the given pin.
-     * 
+     *
      * @param interrupt         The interrupt flag.
      * @param routePin          The pin where the interrupt will be routed.
      *                          should be 1 or 2
@@ -1454,14 +1471,14 @@ public:
 
     /**
      * Disable some interrupt.
-     * 
+     *
      * @param interrupt         The interrupt flag.
      */
     void disableInterrupt(Interrupt interrupt);
 
     /**
      * Interrupt is routed to INT1 pin;
-     * 
+     *
      * @deprecated
      * @param interrupt         The interrupt flag.
      */
@@ -1469,7 +1486,7 @@ public:
 
     /**
      * Interrupt is routed to INT2 pin;
-     * 
+     *
      * @deprecated
      * @param interrupt         The interrupt flag.
      */
@@ -1477,7 +1494,7 @@ public:
 
     /**
      * Interrupt is routed to the given pin;
-     * 
+     *
      * @param interrupt         The interrupt flag.
      * @param routePin          The pin where the interrupt will be routed.
      *                          should be 1 or 2
@@ -1486,63 +1503,63 @@ public:
 
     /**
      * Sets the interrupt polarity
-     * 
+     *
      * @param polarity          The polarity of the interrupt.
      */
     void setInterruptPolarity(InterruptPolarity polarity);
 
     /**
      * Sets the sllep output data rate.
-     * 
-     * It is important to note that when the device is Auto-SLEEP mode, 
-     * the system ODR and the data rate for all the system functional 
-     * blocks are overridden by the data rate set by the ASLP_RATE 
+     *
+     * It is important to note that when the device is Auto-SLEEP mode,
+     * the system ODR and the data rate for all the system functional
+     * blocks are overridden by the data rate set by the ASLP_RATE
      * field.
-     * 
+     *
      * @param rate              The Output Data Rate.
      */
     void setAslpOutputDataRate(AslpOutputDataRate rate);
 
     /**
      * Set the read mode
-     * 
-     * F_READ bit selects between normal and Fast Read mode. When 
+     *
+     * F_READ bit selects between normal and Fast Read mode. When
      * selected, the auto increment counter will skip over the LSB data
-     * bytes. Data read from the FIFO will skip over the LSB data, 
+     * bytes. Data read from the FIFO will skip over the LSB data,
      * reducing the acquisition time. Note F_READ can only be changed
-     * when FMODE = 00. The F_READ bit applies for both the output 
+     * when FMODE = 00. The F_READ bit applies for both the output
      * registers and the FIFO.
-     * 
+     *
      * @param mode              The read mode.
      */
     void setReadMode(ReadMode mode);
 
     /**
      * Sets the oversampling mode.
-     * 
-     * There are four different oversampling modes. There is a normal mode, a 
-     * low noise + power mode, a high-resolution mode and a low-power mode. 
-     * The difference between these are the amount of averaging of the sampled 
-     * data, which is done internal to the device. The following chart shows 
-     * the amount of averaging at each data rate, which is the OSRatio 
-     * (oversampling ratio). There is a trade-off between the oversampling and 
+     *
+     * There are four different oversampling modes. There is a normal mode, a
+     * low noise + power mode, a high-resolution mode and a low-power mode.
+     * The difference between these are the amount of averaging of the sampled
+     * data, which is done internal to the device. The following chart shows
+     * the amount of averaging at each data rate, which is the OSRatio
+     * (oversampling ratio). There is a trade-off between the oversampling and
      * the current consumption at each ODR value.
-     * 
+     *
      * @param om
      */
     void setOversamplingMode(OversamplingMode mode);
 
     /**
      * Sets the High-Pass Filter Cutoff Frequency.
-     * 
-     * The HP_FILTER_CUTOFF register (at 0x0F) sets the high-pass cutoff 
+     *
+     * The HP_FILTER_CUTOFF register (at 0x0F) sets the high-pass cutoff
      * frequency, Fc, for the data. The output of this filter is provided in the
-     * output data registers (0x01 to 0x06). Note that the high-pass filtered 
-     * output data is available for the MMA8451Q and the MMA8452Q only. 
+     * output data registers (0x01 to 0x06). Note that the high-pass filtered
+     * output data is available for the MMA8451Q and the MMA8452Q only.
      * The MMA8453Q has the internal high-pass filter for the embedded functions
-     * but does not have access to the output data. The available cutoff 
+     * but does not have access to the output data. The available cutoff
      * frequencies change depending upon the set Output Data Rate.
-     * 
+     *
      * @param hpf                   The High-Pass Filter Cutoff Frequency.
      */
     void setHighPassFilterCutoffFrequency(HighPassFilterCutoffFrequency frequency);
@@ -1550,34 +1567,34 @@ public:
     /**
      * Registers 0x01 through 0x06 are used to read the X, Y, Z data. The device
      * can be configured to produce high-pass filtered data or low-pass filtered
-     * data by setting or clearing the HPF_Out bit in the XYZ_Data_Cfg Register 
+     * data by setting or clearing the HPF_Out bit in the XYZ_Data_Cfg Register
      * 0x0E. The following code example shows how to set the HPF_Out bit.
      */
     void highPassFilteredData(bool filtered);
 
     /**
      * Sets the fifo overflow mode.
-     * 
-     * NOTE: The FIFO mode can be changed while in the active state. 
-     * The mode must first be disabled F_MODE = 00 then the mode can be 
+     *
+     * NOTE: The FIFO mode can be changed while in the active state.
+     * The mode must first be disabled F_MODE = 00 then the mode can be
      * switched between Fill mode, Circular mode and Trigger mode.
-     * 
+     *
      * @param mode              The overflow mode.
      */
     void setFifoBufferOverflowMode(FifoBufferOverflowMode mode);
 
     /**
      * Sets the fifo watermark.
-     * 
+     *
      * FIFO Event Sample Count Watermark. Default value: 00_0000.
-     * These bits set the number of FIFO samples required to trigger a 
-     * watermark interrupt. A FIFO watermark event flag is raised when 
-     * FIFO sample count F_CNT[5:0] >= F_WMRK[5:0] watermark. 
-     * 
-     * Setting the F_WMRK[5:0] to 00_0000 will disable the FIFO 
-     * watermark event flag generation. Also used to set the number of 
+     * These bits set the number of FIFO samples required to trigger a
+     * watermark interrupt. A FIFO watermark event flag is raised when
+     * FIFO sample count F_CNT[5:0] >= F_WMRK[5:0] watermark.
+     *
+     * Setting the F_WMRK[5:0] to 00_0000 will disable the FIFO
+     * watermark event flag generation. Also used to set the number of
      * pre-trigger samples in Trigger mode.
-     * 
+     *
      * @param watermark         The fifo watermark count.
      */
     void setFifoWatermark(unsigned char watermark);
@@ -1599,14 +1616,14 @@ public:
 
     /**
      * Sets the selection on interrupt pad.
-     * 
+     *
      * @param ppod            PushPullOpenDrain
      */
     void setPushPullOpenDrain(PushPullOpenDrain ppod);
 
     /**
      * Converts an array of chars into a float type. Using current FAST_READ info.
-     * 
+     *
      * @param buf               1 (8-bit) or 2 (14-bit) array of bytes to be converted.
      *                          value.
      */
@@ -1623,7 +1640,7 @@ public:
 
     /**
      * Gets the last error happened.
-     * 
+     *
      * @return                  The last error, 0 means no error.
      */
     CommunicationError gerLastError();
@@ -1637,7 +1654,7 @@ protected:
 
     /**
      * Holds the current Dynamic Range Settings
-     * 
+     *
      * It is important to hold this on the object to avoid
      * unnecessary read operations on the device.
      */
@@ -1645,7 +1662,7 @@ protected:
 
     /**
      * Holds the system Control 1 Register
-     * 
+     *
      * It is important to hold this on the object to avoid
      * unnecessary read operations on the device.
      */
