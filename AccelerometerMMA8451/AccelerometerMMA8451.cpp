@@ -26,7 +26,7 @@ void AccelerometerMMA8451::deviceActivation(DeviceActivation activation) {
 
 bool AccelerometerMMA8451::isDataReady() {
     STATUSbits status = { 0 };
-    int v = readRegister(STATUS);
+    signed short v = readRegister(STATUS);
     if (v < 0) {
         lastError = (CommunicationError) -(v);
         return false;
@@ -241,7 +241,7 @@ float AccelerometerMMA8451::convertToG(unsigned char* buf, bool fastRead) {
         g = ((char) buf[0]) / counts[xyzDataCfg.FS];
     } else {
         float counts[] = { 16384.0, 8192.0, 4096.0 };
-        int aux = (buf[0] << 8) | buf[1];
+        signed short aux = (buf[0] << 8) | buf[1];
         g = aux / counts[xyzDataCfg.FS];
     }
     return g;
