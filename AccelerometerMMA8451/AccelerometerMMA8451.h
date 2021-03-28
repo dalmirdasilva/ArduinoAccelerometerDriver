@@ -1241,15 +1241,15 @@ public:
      */
     void setTransientCount(unsigned char count);
 
-    void AccelerometerMMA8451::setPulseDetection(bool enable, unsigned char axis, bool dpa);
+    void setPulseDetection(bool enable, unsigned char axis, bool dpa);
 
-    void AccelerometerMMA8451::setPulseThreshold(unsigned char thresholdX, unsigned char thresholdY, unsigned char thresholdZ);
+    void setPulseThreshold(unsigned char thresholdX, unsigned char thresholdY, unsigned char thresholdZ);
 
-    void AccelerometerMMA8451::setPulseFirstTimer(unsigned char timer);
+    void setPulseFirstTimer(unsigned char timer);
 
-    void AccelerometerMMA8451::setPulseLatency(unsigned char latency);
+    void setPulseLatency(unsigned char latency);
 
-    void AccelerometerMMA8451::setPulseSecondWindow(unsigned char window);
+    void setPulseSecondWindow(unsigned char window);
 
     /**
      * The MMA8451Q Orientation Detection algorithm confirms the reliability of the function with a configurable Z-lockout angle.
