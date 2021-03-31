@@ -610,6 +610,9 @@ public:
         TRANSIENT_THS_THS = 0x7f,
         TRANSIENT_THS_DBCNTM = 0x80,
 
+        /**
+         * Pulse detection, axes single/double tap
+         */
         PULSE_CFG_XSPEFE = 0x01,
         PULSE_CFG_XDPEFE = 0x02,
         PULSE_CFG_YSPEFE = 0x04,
@@ -1241,14 +1244,45 @@ public:
      */
     void setTransientCount(unsigned char count);
 
+    /**
+     * configure the event flag for the tap detection interrupt function for enabling/disabling single and double pulse
+     *  on each of the axes
+     *
+     * @param enable Whether the status bits will be latched or not in the source register
+     * @param axis See PULSE_CFG_ flags above.
+     * @param dpa Double Pulse Abort, see Application Notes 4072
+     */
     void setPulseDetection(bool enable, unsigned char axis, bool dpa);
 
+    /**
+     * The pulse threshold can be set separately for the X, Y, and Z axes. This allows for the same change in acceleration
+     * for all axes to be set regardless of the static orientation. The threshold values range from 0 to 127 (7 bits
+     * expressed as an absolute value) with steps of 0.063g/LSB at a fixed 8g acceleration range.
+     */
     void setPulseThreshold(unsigned char thresholdX, unsigned char thresholdY, unsigned char thresholdZ);
 
+    /**
+     * The byte PULSE_TMLT (bit fields defined as Tmlt7 through Tmlt0) define the maximum time interval that can elapse
+     * between the start of the acceleration on the selected axis exceeding the specified threshold and the end when
+     * the axes of acceleration must go back below the specified threshold.
+     */
     void setPulseFirstTimer(unsigned char timer);
 
+    /**
+     * The Pulse Latency Timer Register is the time duration that the tap event can be read from the source register
+     * to detect the X, Y, and Z for single pulse or double pulse events without the latch enabled. The duration
+     * of any specified latency time is valid each time a single or double pulse occurs
+     */
     void setPulseLatency(unsigned char latency);
 
+    /**
+     * The PULSE_WIND register with (bit fields Wind7 through Wind0) defines the maximum interval of time that can
+     * elapse after the end of the latency interval within which the start of the second pulse event must be detected
+     * (provided the device has been configured with double pulse detection enabled). The detected second pulse width
+     * must be shorter than the time limit constraints specified by the PULSE_TMLT register, but the double pulse need
+     * not cross the threshold within the time specified by the PULSE_WIND register. The timing is the same as that of
+     * the latency timer. The maximum time is the time step at the ODR and oversampling mode multiplied by 255.
+     */
     void setPulseSecondWindow(unsigned char window);
 
     /**
